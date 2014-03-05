@@ -3,7 +3,6 @@
 
 library(data.table)
 #help("data.table")
-require(bit64) #for fread function
 library(ggplot2)
 library(reshape2) # for melt
 library(plyr) # for desc function of ordering
