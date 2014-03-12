@@ -74,3 +74,10 @@ The question is how could this be estimated. It is a hierarchical model. Have yo
 * Might choke on data of this magnitude
 
 SAS should (might?) be capable with a careful study of something like Proc MIXED.
+
+
+Room Bookings
+----------------------------------
+
+* HSSL - RM-19C, 1:00pm - 5:00pm Wednesday, March 19, 2014
+* HSSL - RM-07F, 10:00am - 2:00pm Wednesday, March 26, 2014
