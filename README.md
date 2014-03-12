@@ -55,3 +55,22 @@ Summary of meeting March 4th 2014 by Max
 * **Economy**: stock indices, unemployment rate, GDP (look up if there are standard economic indices)
   * There is of course correlation between these indices. If we use multiple indices, we may want to use something like PCA to reduce correlation.
 	
+
+Random thoughts March 6th 2014 by Celia
+-------------------
+
+Let yi be the number of minutes of TV watching for person i, and let Xi be a (vector) covariate like education or income or employment, for person i.
+
+Assume yi = a(t) + b(t)Xi + ei. This allows the mean a to vary with time t and also the association with Xi to vary with time.
+
+Ideally, it would be nice to add structure to a(t) and b(t) (think hierarchical models). For example: 
+a(t) = a0 + a1t + a2t^2 + a3E(t) + ... + epsilon, where E(t) refers to an economic measure in year t. Given that the data span about 10 years there will be a limit on how many covariates can be included.
+
+Similarly, b(t) = b0 + b1t + b2t^2 + b3E(t) + ... + epsilon. 
+
+The question is how could this be estimated. It is a hierarchical model. Have you any experience with WINBUGS?
+* Gibbs sampling, Bayesian models.
+* Very flexible but challenging to get started
+* Might choke on data of this magnitude
+
+SAS should (might?) be capable with a careful study of something like Proc MIXED.
