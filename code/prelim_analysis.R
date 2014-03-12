@@ -7,8 +7,8 @@ library(ggplot2)
 library(reshape2) # for melt
 library(plyr) # for desc function of ordering
 
-setwd("~/git_repositories/atus/data")
-
+setwd("~/git_repositories/atus.git/data")
+load("atusfinalDT.RData")
 
 # Import data -------------------------------------------------------------
 
@@ -43,29 +43,23 @@ setkey(DTresp, TUCASEID)
 # dont seem to have anything useful for our purposes
 DT <- DTresp[DTsum]
 
+# reduced dataset to work with ggplot2 (full dataset crashes ggplot2 if I 
+# make a coding error when using ggplot2)
+set.seed(1234)
+DTred <- DT[sample(x=1:nrow(DT), size=0.10*nrow(DT)), , ]
 
 # Summary stats -----------------------------------------------------------
-
-tables()
-summary(DT)
 
 #summarising data
 DT[, .N, by = TESEX]
 DT[, .N, by = TRCHILDNUM]
-DT[, .N, by = list(TUYEAR)]
-
-k <- as.data.frame(DT[, mean(t120303), by = list(TUYEAR)])
-p1 <- ggplot(k, aes(x = factor(TUYEAR), y = V1))
-p1 + geom_bar(stat = "identity")
-plot(k$TUYEAR, k$V1, type="l")
-
+DT[, .N, by = list(TUYEAR, TUMONTH)]
 DT[ , mean(TRCHILDNUM), by = TESEX]
 DT[ , TRCHILDNUM, by = TESEX]
 DT[ , j = list(mean=mean(TRCHILDNUM), sd = sd(TRCHILDNUM)), by = TESEX]
 
 #subsetting data
 DT[1:10, "TUYEAR" , with=F]
-str(DT)
 
 # Watching TV stats -------------------------------------------------------
 
@@ -80,7 +74,7 @@ DT[, mean(t120304), by = TESEX]
 DT[, mean(t120307), by = TESEX]
 DT[, mean(t120308), by = TESEX]
 
-
+DT[, mean(t120308), by = list(TUYEAR, TUMONTH)]
 
 
 # Exploratory Plots -------------------------------------------------------
@@ -96,7 +90,6 @@ p1 + geom_bar(position = "dodge") +
     guides(fill=guide_legend(title="gender"))
 
 
-
 # Gender and Race --------------------------------------
 p1 <- ggplot(DT,aes(x=PTDTRACE,fill=factor(TESEX)))
 cols <- c("1" = "blue","2" = "red")
@@ -105,40 +98,28 @@ p1 + geom_bar(position = "dodge") +
     guides(fill=guide_legend(title="gender"))
 
 
-
 # TV and time by gender ---------------------------------------------------
 
-p1 <- ggplot(DT, aes(TUDIARYDATE,t120303 ))
-p1 + geom_point()
-
-setkey(DT,TUDIARYDATE)
-setkey(DT, t120303)
-setkey(DT,TUDIARYDATE)
-
-
-DT[1:10,TUDIARYDATE,]
-
-p <- ggplot(DT, aes(x=t120303, fill=factor(TESEX)))
+p <- ggplot(DTred, aes(x=t120303, fill=factor(TESEX)))
 p  + geom_bar(position="dodge")
 
-
-p <- ggplot(DT, aes(x = factor(cyl), y = mmpg)) geom_bar(stat = "identity")
-
-
-p <- ggplot(DT, aes(x=TUDIARYDATE, y=t120303, group=TESEX))
-p + geom_line()
-
-
-p <- ggplot(DT, aes(x = factor(TUMONTH), y = t120303))
+p <- ggplot(DTred, aes(x = factor(TUMONTH), y = t120303))
 p + geom_bar(stat = "identity", position="dodge")
 
+k <- ggplot(DTred, aes(t120303, fill=factor(TUYEAR)))
+k + geom_bar() + xlim(0,600) 
 
-DT[,sum(t120303), by=TUMONTH]
+d <- ggplot(DTred, aes(x = TUYEAR, y = TUMONTH))
+d+ stat_sum() + scale_y_continuous(breaks=seq(1, 12, 1)) +
+  scale_x_continuous(breaks=seq(2003, 2012, 1)) 
 
-ggplot(DT, aes(t120303)) + geom_bar() +
-  facet_wrap(~ TESEX)
+m <- ggplot(DT, aes(x = TUYEAR))
+m + geom_density()+scale_x_continuous(breaks=seq(2003, 2012, 1)) 
 
 
-ggplot(DT, aes(t120303)) +
-  geom_freqpoly(aes(group = TUYEAR, colour = TUYEAR))
+m <- ggplot(DTred, aes(x = t120303))
+m + geom_density(aes(fill=factor(TESEX)), size=2) + xlim(0,400)
 
+qplot(t120303, ..count.., data=DTred, geom="density", fill=factor(TUYEAR), position="stack")+xlim(0,500)
+
+qplot(t120303, ..density.., data=DTred, geom="density", fill=factor(TUYEAR), position="stack")+xlim(0,500)
