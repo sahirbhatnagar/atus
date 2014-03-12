@@ -1,4 +1,3 @@
-
 # Load libraries ----------------------------------------------------------
 
 library(data.table)
@@ -28,11 +27,14 @@ load("atusfinalDT.RData")
 # as indicated by a unique value of the variable TUCASEID.
 DTsum <- read.csv("atussum_0312.dat")
 DTsum <- as.data.table(DTsum)
+DTsum$TUCASEID <- as.character(DTsum$TUCASEID)
 
 # The data file atusresp_0312.dat (2003-12 Respondent file) contains 132 
 # variables and 136,960 observations.
 DTresp <- read.csv("atusresp_0312.dat")
 DTresp <- as.data.table(DTresp)
+DTresp$TUCASEID <- as.character(DTresp$TUCASEID)
+
 
 # setkeys
 setkey(DTsum, TUCASEID)
