@@ -1,5 +1,6 @@
 We consider a hierarchical model to characterize the effect of economy on the amount of time citizens spend
 watching television.  Using penalized regression methods such as group LARS, we determine the strongest
 sociodemographic predictors.  We account for the time dependent nature of the survey data through the use of 
-autoregressive models. Measures of economic performance included include GDP, unemployment rate, and stock indices.  PCA is then used to
-determine an overall measure.
+autoregressive models. Measures of economic performance included include GDP, unemployment rate, and stock indices. PCA
+is then used to determine an overall measure.  A finite mixture model is also used to address the concern of the large
+number of respondents listing no hours of television viewing coming from heterogeneity in the population.
