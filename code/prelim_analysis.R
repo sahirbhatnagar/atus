@@ -36,6 +36,7 @@ DTresp <- as.data.table(DTresp)
 DTresp$TUCASEID <- as.character(DTresp$TUCASEID)
 
 
+str(DTsum)
 # setkeys
 setkey(DTsum, TUCASEID)
 setkey(DTresp, TUCASEID)
