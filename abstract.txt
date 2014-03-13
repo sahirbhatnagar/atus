@@ -1,1 +1,5 @@
-put abstract here
+We consider a hierarchical model to characterize the effect of economy on the amount of time citizens spend
+watching television.  Using penalized regression methods such as group LARS, we determine the strongest
+sociodemographic predictors.  Autoregressive models allow us to 
+
+-PCA for different economic measures to determine a grand measure of economy
