@@ -12,6 +12,7 @@ figure/*
 .Rproj.user
 # Ignore data #
 #######################
-data
+data/atusresp_0312.dat
+data/atussum_0312.dat
 .Rhistory
 finaldata
