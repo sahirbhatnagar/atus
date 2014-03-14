@@ -54,8 +54,12 @@ DT.cat <- subset(DTresp, select=(names(DTresp) %in% var.DTresp.cat))
 DT.cat <- merge(DT.cat, subset(DTsum, select=(names(DTsum) %in% var.DTsum.cat)), by="TUCASEID")
 DT.cat[,EDUC:=EDUC]
 
-#And to do regression, we need a response!
-TVtime <- DTsum$t120303+DTsum$t120304
+#convert categorical data into factors
+cat.names <- names(DT.cat)[-1]
+DT.cat[,(cat.names):=lapply(.SD, as.factor),.SDcols=cat.names]
 
-TVind <- TVtime
-for(i in 1:nrow(DTsum)) if(TVtime[i]>0) TVind[i] = 1
+#data table of the response and id, sum the normal and religious tv times, add indicator variable
+DT.y <- DTsum[,list(TUCASEID, TVtime=t120303+t120304)][,TVind:=as.numeric(TVtime!=0)]
+
+#combine categorical and continuous data and response data
+DT <- Reduce(merge,list(DT.y,DT.cat,DT.cont))
