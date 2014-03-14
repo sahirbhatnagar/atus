@@ -1,6 +1,1 @@
-We consider a statistical model to characterize the effect of economy on the amount of time citizens spend
-watching television.  Using penalized regression methods such as group LARS, we determine the strongest
-sociodemographic predictors among e.g. race, sex, education level.  We account for the time-dependent nature of the 
-survey data through the use of a hierarchical model. Measures of economic performance include GDP, unemployment rate,
-and stock indices, with PCA being used to derive an aggregate measure. A separate logistic model is proposed to account 
-for the large number of respondents reporting no hours of television viewing.
+We consider the effect of economy on the amount of time citizens spend watching television, as reported by the American Time Use Survey (ATUS).  Using penalized regression methods such as group LARS, we determine the strongest sociodemographic predictors among e.g. race, sex, education level. We account for the time-dependent nature of the survey data through the use of a hierarchical model, which allows us to introduce economic variables in the model. Measures of economic performance include GDP, unemployment rate, and stock indices, with PCA being used to derive an aggregate measure. A separate logistic model is proposed to account for the large number of respondents reporting no hours of television viewing.
