@@ -1,13 +1,21 @@
+##################################
+# R source code file used to create variables used for ATUS analysis
+# Created by Maxime, March 13, 2014
+# Updated March 14, 2014
+# hosted on Github repo 'sahirbhatnagar/atus'
+# NOTE: you need to change your working directory to where the data is
+##################################
+
 library(data.table)
 library(bit64)
 library(plotrix)
 
 #Respondent data
-DTresp <- fread("atusresp_0312/atusresp_0312.dat")
+DTresp <- fread("atusresp_0312.dat")
 DTresp$TUCASEID <- as.character(DTresp$TUCASEID)
 
 #Activity summary data
-DTsum <- fread("atussum_0312/atussum_0312.dat")
+DTsum <- fread("atussum_0312.dat")
 DTsum$TUCASEID <- as.character(DTresp$TUCASEID)
 
 #to merge
