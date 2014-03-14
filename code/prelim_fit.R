@@ -57,10 +57,9 @@ DT.cat[,EDUC:=EDUC]
 #convert categorical data into factors
 cat.names <- names(DT.cat)[-1]
 DT.cat[,(cat.names):=lapply(.SD, as.factor),.SDcols=cat.names]
-str(DT.cat)
 
 #data table of the response and id, sum the normal and religious tv times, add indicator variable
-DT.y <- DTsum[,list(TUCASEID,t120303,t120304, TVtime=t120303+t120304)][,TVind:=as.numeric(TVtime!=0)]
+DT.y <- DTsum[,list(TUCASEID, TVtime=t120303+t120304)][,TVind:=as.numeric(TVtime!=0)]
 
 #combine categorical and continuous data and response data
 DT <- Reduce(merge,list(DT.y,DT.cat,DT.cont))
