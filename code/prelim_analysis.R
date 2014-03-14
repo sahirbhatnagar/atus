@@ -1,10 +1,22 @@
 # Load libraries ----------------------------------------------------------
 
+plot(density(DT$t120303))
+
+DT[,combined:=t120303+t120304,]
+
+j<-as.data.frame(DT[ , .N , by=combined])
+
+with(j, hist(x=combined,y=N))
+
+plot(density())
+
 library(data.table)
 #help("data.table")
 library(ggplot2)
 library(reshape2) # for melt
 library(plyr) # for desc function of ordering
+
+source("~/git_repositories/atus/code/multiplot.R")
 
 setwd("~/git_repositories/atus.git/data")
 load("atusfinalDT.RData")
@@ -36,7 +48,6 @@ DTresp <- as.data.table(DTresp)
 DTresp$TUCASEID <- as.character(DTresp$TUCASEID)
 
 
-str(DTsum)
 # setkeys
 setkey(DTsum, TUCASEID)
 setkey(DTresp, TUCASEID)
@@ -104,7 +115,7 @@ p1 + geom_bar(position = "dodge") +
 # TV and time by gender ---------------------------------------------------
 
 p <- ggplot(DTred, aes(x=t120303, fill=factor(TESEX)))
-p  + geom_bar(position="dodge")
+p  + geom_bar(position="dodge") + xlim(0,600)
 
 p <- ggplot(DTred, aes(x = factor(TUMONTH), y = t120303))
 p + geom_bar(stat = "identity", position="dodge")
@@ -126,3 +137,58 @@ m + geom_density(aes(fill=factor(TESEX)), size=2) + xlim(0,400)
 qplot(t120303, ..count.., data=DTred, geom="density", fill=factor(TUYEAR), position="stack")+xlim(0,500)
 
 qplot(t120303, ..density.., data=DTred, geom="density", fill=factor(TUYEAR), position="stack")+xlim(0,500)
+
+
+
+# Box plots for tv use by year, month, sex --------------------------------
+cols <- c("1" = "blue","2" = "red")
+p <- ggplot(DTred, aes(factor(TUYEAR), t120303))
+p + geom_boxplot(aes(fill = factor(TESEX) )) +ylim(0,220)
+
+p <- ggplot(DTred, aes(factor(TUMONTH), t120303))
+p + geom_boxplot(aes(fill = factor(TESEX) )) +ylim(0,220)
+
+
+
+
+nrow(j<-as.data.frame(unique(DTred$TUDIARYDATE)))
+
+
+p <- ggplot(DTred, aes(factor(TUYEAR), TUDIARYDATE))
+p + geom_boxplot() 
+
+
+# 1:sunday
+j<-DT[,.N,by=list(TUDIARYDAY, TUMONTH,TUYEAR)]
+str(j)
+
+DTred[1:10,-1:-2,with=F]
+DTred
+hist(subset(DTred$TUDIARYDATE, TUYEAR=), breaks=500)
+
+
+p4 <- 
+  ggplot(subset(DTred,TUYEAR %in% c(2003)), aes(x=monthyear, fill=TESEX)) +
+  geom_histogram(colour="black", binwidth=1) +
+  facet_grid(TUYEAR ~ .) +
+  ggtitle("Final weight, by diet") + theme(legend.position="none")
+
+plot(DTred$monthyear,DTred$t120303)
+
+p1 <- ggplot(subset(DTred,TUYEAR %in% c(2003)), aes(x=TUDIARYDATE, y=t120303, group=TESEX)) +
+  geom_line() + facet_grid(TUYEAR ~ .) 
+
+p1 <- ggplot(subset(DTred,TUYEAR %in% c(2003)), aes(x=monthyear, y=t120303, group=TESEX)) +
+  geom_line() + facet_grid(TUYEAR ~ .) 
+
+p1 <- ggplot(subset(DTred,TUYEAR %in% c(2003)), aes(x=monthyear, y=t120303)) +
+  geom_line() + facet_grid(TUYEAR ~ .) + scale_x_continuous(breaks=seq(2003, 2012, 1)) 
+
+
+DTred[,monthyear:=as.numeric(paste0(TUYEAR,TUMONTH)),]
+str(DTred$monthyear)
+as.numeric(DTred$monthyear)
+
+
+example("data.table")
+
