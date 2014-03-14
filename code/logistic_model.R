@@ -16,6 +16,7 @@ X <- merge(DT.cont, apply(DT.cat, 2, as.numeric), by="TUCASEID")
 X<-X[,-1,]
 
 #logistic regression with "penalized"
+library(penalized)
 
 prefit <- penalized(TVind, ~., data=X, model="logistic", lambda2=0, steps="Park")
 m.lambda <- prefit[[1]]@lambda1
