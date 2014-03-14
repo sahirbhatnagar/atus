@@ -4,9 +4,11 @@ library(plotrix)
 
 #Respondent data
 DTresp <- fread("atusresp_0312/atusresp_0312.dat")
+DTresp$TUCASEID <- as.character(DTresp$TUCASEID)
 
 #Activity summary data
 DTsum <- fread("atussum_0312/atussum_0312.dat")
+DTsum$TUCASEID <- as.character(DTresp$TUCASEID)
 
 #to merge
 setkey(DTsum, TUCASEID)
