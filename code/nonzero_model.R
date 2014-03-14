@@ -13,24 +13,34 @@ setwd("~/git_repositories/atus.git/data")
 source("~/git_repositories/atus.git/code/prelim_fit.R")
 
 library(grplasso)
+library(biglm)
 
-#number of 
+#number of people who watched vs not watched 
 DT[,.N, by=TVind]
 
-#only 324 people who watched religious tv
-DT.y[t120304!=0]
+#DT with non zero indicators
+DT <- DT[TVind!=0]
+
+#remove id variable
+DT <- DT[,-1,with=FALSE]
+
+
+fit <- grplasso(TVtime ~ ., data = DT, model = LinReg(), lambda = 20,
+          center = TRUE, standardize = TRUE)
 
 
 
 
-contr <- rep(list("contr.sum"), ncol(DT.cat) )
-names(contr) <- names(DT.cat)
 
-fit <- grplasso(TVTIME ~ ., data = DT, model = LinReg(), lambda = 20,
-                contrasts = contr, center = TRUE, standardize = TRUE)
-str(TVtime)
+larFit$coefficients
 
-str(DT.cat)
+str(X)
+larFitBlocked <- biglars.fit(diabetes$x, diabetes$y, type = "lar",
+                             blockSize = 50)
+
+data(diabetes)
+
+str(diabetes)
 
 kk<-DT[,print(.SD),by=TUCASEID]
 ##################
