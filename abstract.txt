@@ -1,7 +1,7 @@
 We consider the effect of economy on the amount of time citizens reported watching television 
 on the ATUS between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, 
 and stock indices, as reported by federal agencies, with PCA being used to derive an aggregate measure. 
-Using penalized regression methods, we consider the effects of sociodemographic factors (e.g. race, sex, 
-education level, income) that might also influence television viewing. A hierarchical model is used 
+Using penalized regression methods, we determine the strongest sociodemographic factors (e.g. race, sex, 
+education level, income) influencing television viewing. A hierarchical model is used 
 to allow the association with covariates to vary with time. To account for the large number of respondents 
 reporting no hours of television viewing, a separate logistic model is proposed.
