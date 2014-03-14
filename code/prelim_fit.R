@@ -45,3 +45,9 @@ DT.cont <- merge(DT.cont, subset(DTsum, select=(names(DTsum) %in% var.DTsum.cont
 DT.cat <- subset(DTresp, select=(names(DTresp) %in% var.DTresp.cat))
 DT.cat <- merge(DT.cat, subset(DTsum, select=(names(DTsum) %in% var.DTsum.cat)), by="TUCASEID")
 DT.cat[,EDUC:=EDUC]
+
+#And to do regression, we need a response!
+TVtime <- DTsum$t120303+DTsum$t120304
+
+TVind <- TVtime
+for(i in 1:nrow(DTsum)) if(TVtime[i]>0) TVind[i] = 1
