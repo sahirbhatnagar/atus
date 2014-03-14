@@ -89,3 +89,20 @@ Meeting with Abbas March 12, 2014
 * Get started with multiple linear regression without weights. Start simple.
 * Look into group LASSO for categorical variables, and varying coefficients
 * Regularization techniques exist for varying coefficients
+
+
+Meeting with Olli March 13, 2014
+----------------------------------
+
+* Weights are used to make your sample representative of the population. If you put in your model the factors which were used to compute the weights, then you are effectively correcting for the imbalances arising from the sampling (but note that the meaning of your coefficient for these variables changes -- you basically have two contributions: the true influence at the population level, and the influence of the sampling mechanism). In other words, how to include the weights in the analysis depends on the question you are asking.
+* The hierarchical structure added to the model to take into account the time-dependence can be fitted trough Gibbs sampling (cf. JAGS).
+* The first important step is to write down a model, then discuss possible adjustments and decide how to fit it to the data.
+* There is a lot of zero values for TV use; our analysis should address this problem
+The model we came up with after this meeting is the following:
+Yi = a(ti) + bXi + epsiloni,
+where a(ti) = aE(ti) + espilon(t_i).
+We are thus left with the following questions:
+* What kind of autoregressive structure do we want for a(ti), i.e. what is the distribution of the error term in year k given the error terms in previous years?
+* How do we want to handle the zero-inflated structure? FMR? Or two separate analyses?
+* How can we measure "economy"?
+* How do we do variable selection with this model?
