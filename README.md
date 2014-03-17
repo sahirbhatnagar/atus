@@ -109,3 +109,14 @@ We are thus left with the following questions:
 * How do we want to handle the zero-inflated structure? FMR? Or two separate analyses?
 * How can we measure "economy"?
 * How do we do variable selection with this model?
+
+
+
+Kevin's thoughts on economic variables March 16, 2014
+----------------------------------
+
+* Should use Real GDP rather than GDP as it adjusts for inflation.
+* GDP data is available only quarterly while data for unemployment and stock indices are available monthly.  Initial thought is just to average over every three months to get quarterly estimates for unemployment and stock indices.  Any possible problems with this???
+* Big 3 Stock indices in USA: Dow Jones Industrial Average, S&P-500, and NASDAQ Composite.  First two seem fine as they're calculated based on US companies, however, third includes international companies and therefore was excluded from the analysis.
+* For stock index data we should use the column AdjClose as it's adjusted for inflation.
+----------------------------------
