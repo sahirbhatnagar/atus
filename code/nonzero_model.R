@@ -6,24 +6,56 @@
 # NOTE: 
 ##################################
 
-# directory where the data and list of variables are located
-setwd("~/git_repositories/atus.git/data")
+# directory where the data and list of variables are located -----
+setwd("~/git_repositories/atus/data")
 
-# import the data
-source("~/git_repositories/atus.git/code/prelim_fit.R")
+# import the data -----
+source("~/git_repositories/atus/code/prelim_fit.R")
 
 library(grplasso)
 library(biglm)
 
-#number of people who watched vs not watched 
+#number of people who watched vs not watched ----
 DT[,.N, by=TVind]
 
-#DT with non zero indicators
+
+# Subset the data ---------------------------------------------------------
+
+#DT with non zero indicators 
 DT <- DT[TVind!=0]
 
-#remove id variable
-DT <- DT[,-1,with=FALSE]
+#remove id and tv indicator variable 
+DT <- DT[,c(-1,-3),with=FALSE]
 
+# reduced dataset to work with ggplot2 (full dataset crashes ggplot2 if I 
+# make a coding error when using ggplot2)
+set.seed(1234)
+DT <- DT[sample(x=1:nrow(DT), size=0.20*nrow(DT)), , ]
+
+
+# Fit Gamma GLM -----------------------------------------------------------
+
+#gamma regression with log link
+fit<- glm(TVtime ~ ., data = DT, family=Gamma(link="log"))
+summary(fit)
+
+#residuals look good
+par(mfrow = c(2, 2), oma = c(0, 0, 2, 0))
+plot(fit)
+
+#very long
+step<-step(fit, direction="backward")
+
+#backward selection
+drop<-sdrop1(fit, test="LRT")
+
+
+
+
+
+
+
+# Group Lasso (not working) -----------------------------------------------
 
 fit <- grplasso(TVtime ~ ., data = DT, model = LinReg(), lambda = 20,
           center = TRUE, standardize = TRUE)
