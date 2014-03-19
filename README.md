@@ -111,7 +111,6 @@ We are thus left with the following questions:
 * How do we do variable selection with this model?
 
 
-
 Kevin's thoughts on economic variables March 16, 2014
 ----------------------------------
 
@@ -119,3 +118,9 @@ Kevin's thoughts on economic variables March 16, 2014
 * GDP data is available only quarterly while data for unemployment and stock indices are available monthly.  Initial thought is just to average over every three months to get quarterly estimates for unemployment and stock indices.  Any possible problems with this???
 * Big 3 Stock indices in USA: Dow Jones Industrial Average, S&P-500, and NASDAQ Composite.  First two seem fine as they're calculated based on US companies, however, third includes international companies and therefore was excluded from the analysis.
 * For stock index data we should use the column AdjClose as it's adjusted for inflation.
+
+
+Meeting March 19th (Max, Sy, KMAC)
+---------------------------------
+
+[Gamma Regression Slides and Exploratory Analysis Examples](https://www-m4.ma.tum.de/fileadmin/w00bdb/www/czado/lec8.pdf)
