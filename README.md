@@ -136,3 +136,7 @@ Meeting March 26th (Max Sy, Kevisco)
 ---------------------------------
 
 [*A review of Bayesian variable selection methods: What, How and Which*](http://www.evolvedmicrobe.com/Literature/2009_Review%20of%20Bayesian%20Variable%20selection%20methods.pdf), by O'Hara and Sillanpaa (2009), with [code provided](http://ba.stat.cmu.edu/journal/2009/vol04/issue01/ohara/supplement.html)
+
+[*The Bayesian Lasso*](http://www.stat.ufl.edu/archived/casella/Papers/Lasso.pdf), Park and Casella (2008)
+
+[*Efﬁcient Empirical Bayes Variable Selection and Estimation in Linear Models*](http://pages.stat.wisc.edu/~myuan/papers/lasso.final.pdf), Yuan and Lin (2005)
