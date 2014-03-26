@@ -140,3 +140,8 @@ Meeting March 26th (Max Sy, Kevisco)
 [*The Bayesian Lasso*](http://www.stat.ufl.edu/archived/casella/Papers/Lasso.pdf), Park and Casella (2008)
 
 [*Efﬁcient Empirical Bayes Variable Selection and Estimation in Linear Models*](http://pages.stat.wisc.edu/~myuan/papers/lasso.final.pdf), Yuan and Lin (2005)
+
+For next week:
+* Kmac: will work on PCA, naive analysis of tvtime use vs. economy, and put data of three columns for economy (2 PC's and time)
+* Max: look at income and race variable, missing data, and any other that might need to be included
+* Sy: Read papers on Bayesian variable selection
