@@ -81,6 +81,7 @@ Room Bookings
 
 * HSSL - RM-19C, 1:00pm - 5:00pm Wednesday, March 19, 2014
 * HSSL - RM-07F, 10:00am - 2:00pm Wednesday, March 26, 2014
+* HSSL - M2-17B, 1:00pm - 5:00pm Wednesday, April 2, 2014
 
 
 Meeting with Abbas March 12, 2014
