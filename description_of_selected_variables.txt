@@ -31,7 +31,7 @@ TEHRUSLT	      Total hours usually worked in a week
 EDUC (5)	      Not enrolled at school; HS/college or university, and Full/part-time
 TVTIME          Time spent watching television (sum of t120303 and t120304)
 TVIND           Whether the respondent watched TV
-ECON            Economic measure *see pca.R*
+ECON1 and ECON2   Economic measures *see pca.R*
 
 Variables not included in dataset, but used for computing the tv time
 t120303		Number of minutes spent watching non-religious television and movies
