@@ -55,58 +55,37 @@ DT <- DT[DTcps]
 DT$FAMINC <- pmax(DT$HUFAMINC, DT$HEFAMINC)
 DT <- subset(DT, select=(colnames(DT) %ni% c("HUFAMINC", "HEFAMINC")))
 
-#We will run the following loops in parallel
-library(doParallel)
-library(foreach)
-library(plyr)
-cl<-makeCluster(2)
-registerDoParallel(cl) # register these 2 cores with the "foreach" package
-
 #there are too many race codes; reducing to five
 
-foreach(i=1:nrow(DT)) %dopar% {
-  
-  if(DT$PTDTRACE[i] %in% c(6,10,11,12,15,16,22,23,25,26)) DT$PTDTRACE[i]=2
-  if(DT$PTDTRACE[i] %in% c(7,13,17,24))                   DT$PTDTRACE[i]=3
-  if(DT$PTDTRACE[i] %in% c(8,19))                         DT$PTDTRACE[i]=4
-  if(DT$PTDTRACE[i] %in% c(9,14,18,20,21))                DT$PTDTRACE[i]=5
-  
-}
+DT$PTDTRACE <- 2*(DT$PTDTRACE %in% c(6,10,11,12,15,16,22,23,25,26)) +
+               3*(DT$PTDTRACE %in% c(7,13,17,24)) +
+               4*(DT$PTDTRACE %in% c(8,19)) +
+               5*(DT$PTDTRACE %in% c(9,14,18,20,21))
 
 #there are too many codes for level of education; reducing to five
-
-foreach(i=1:nrow(DT)) %dopar% {
   
-  if(DT$PEEDUCA[i] %in% 31:34) DT$PEEDUCA[i]=0
-  if(DT$PEEDUCA[i] %in% 35:38) DT$PEEDUCA[i]=1
-  if(DT$PEEDUCA[i] %in% 39:42) DT$PEEDUCA[i]=2
-  if(DT$PEEDUCA[i] %in% 43:44) DT$PEEDUCA[i]=3
-  if(DT$PEEDUCA[i] %in% 45:46) DT$PEEDUCA[i]=4
-  
-}
+DT$PEEDUCA <- 1*(DT$PEEDUCA %in% 31:34) +
+              2*(DT$PEEDUCA %in% 35:38) +
+              3*(DT$PEEDUCA %in% 39:42) +
+              4*(DT$PEEDUCA %in% 43:44) +
+              5*(DT$PEEDUCA %in% 45:46)
 
 #the presence of spouse/unmarried partner should be the same, since
 #marital status is encoded somewhere else
 
-foreach(i=1:nrow(DT)) %dopar% {
-  
-  if(DT$TRSPPRES[i] == 3)     DT$TRSPPRES[i]=0
-  if(DT$TRSPPRES[i] %in% 1:2) DT$TRSPPRES[i]=1
-  
-}
+DT$TRSPPRES <- 0*(DT$TRSPPRES == 3) +
+               1*(DT$TRSPPRES %in% 1:2)
 
 #We should also create a categorical variable for education (HS, college/uni; FT, PT)
 #since it's now separated on several variables
-#Code: 0: not at school; 1:HS Full-time; 2: HS Part-time
-#3: College/university Full-time; 4: College/university Part-time
+#Code: 1: not at school; 2:HS Full-time; 3: HS Part-time
+#4: College/university Full-time; 5: College/university Part-time
 
-DT$EDUC <- rep(0, times=nrow(DTresp))
-
-foreach(i=1:nrow(DT)) %dopar% {
-  
-  if(DT$TESCHENR[i] %in% c(-1,2)) DT$EDUC[i]= 0
-  if(DT$TESCHENR[i]==1)           DT$EDUC[i] = DT$TESCHFT[i]+2*DT$TESCHLVL[i]-2
-}
+DT$EDUC <- 1*(DT$TESCHENR %in% c(-1,2)) +
+           2*(DT$TESCHFT==1 & DT$TESCHLVL==1) +
+           3*(DT$TESCHFT==2 & DT$TESCHLVL==1) +
+           4*(DT$TESCHFT==1 & DT$TESCHLVL==2) +
+           5*(DT$TESCHFT==2 & DT$TESCHLVL==2)
 
 DT <- subset(DT, select=(colnames(DT) %ni% c("TESCHENR", "TESCHFT", "TESCHLVL")))
 
@@ -114,17 +93,10 @@ DT <- subset(DT, select=(colnames(DT) %ni% c("TESCHENR", "TESCHFT", "TESCHLVL"))
 #are all dependent of the value of TELFS
 #we make them independent by replacing the missing values
 
-foreach(i=1:nrow(DT)) %dopar% {
-  
-  if(DT$TELFS[i] %in% c(3,4,5)){
-    
-    DT$TRERNWA[i] =0
-    DT$TEMJOT[i]  =0
-    DT$TRDPFTPT[i]=0
-    DT$TEHRUSLT[i]=0
-  }
-  
-}
+DT$TRERNWA  <- as.numeric(DT$TELFS[i] %ni% c(3,4,5))*DT$TRERNWA
+DT$TEMJOT   <- as.numeric(DT$TELFS[i] %ni% c(3,4,5))*DT$TEMJOT
+DT$TRDPFTPT <- as.numeric(DT$TELFS[i] %ni% c(3,4,5))*DT$TRDPFTPT
+DT$TEHRUSLT <- as.numeric(DT$TELFS[i] %ni% c(3,4,5))*DT$TEHRUSLT
 
 #The binary variables are coded 1:YES, 2:NO
 #to simplify analysis we code them 1:YES, 0:NO
@@ -145,4 +117,25 @@ DT$TVIND <- as.numeric(DT$TVTIME!=0)
 
 DT <- subset(DT, select=(colnames(DT) %ni% c("t120303", "t120304")))
 
+#Finally, we add the economic variable
+source("~/git_repositories//atus//code//pca.R")
+
+ECON<-as.data.frame(ECON[,-3])
+colnames(ECON) <- c("ECON1", "ECON2")
+
+for(year in 2003:2012){
+  
+  lag <- 4*(year-2003)
+  
+  DT$ECON1 <- ECON$ECON1[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
+      ECON$ECON1[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
+      ECON$ECON1[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
+      ECON$ECON1[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
+  
+  DT$ECON2 <- ECON$ECON2[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
+    ECON$ECON2[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
+    ECON$ECON2[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
+    ECON$ECON2[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
+}
+  
 save(DT, file="data.Rda")
