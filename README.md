@@ -132,7 +132,7 @@ We discussed the following plan
 * Think about hierarchical models more deeply. We should be able to explain why we use it
 
 
-Meeting March 26th (Max Sy, Kevisco)
+Meeting March 26th (Max, Sy, Kevisco)
 ---------------------------------
 
 [*A review of Bayesian variable selection methods: What, How and Which*](http://www.evolvedmicrobe.com/Literature/2009_Review%20of%20Bayesian%20Variable%20selection%20methods.pdf), by O'Hara and Sillanpaa (2009), with [code provided](http://ba.stat.cmu.edu/journal/2009/vol04/issue01/ohara/supplement.html)
@@ -145,3 +145,8 @@ For next week:
 * Kmac: will work on PCA, naive analysis of tvtime use vs. economy, and put data of three columns for economy (2 PC's and time)
 * Max: look at income and race variable, missing data, and any other that might need to be included
 * Sy: Read papers on Bayesian variable selection
+
+Data cleaning/Variable selection (2014/04/29)
+---------------------------------
+
+The data cleaning process is now completed, and the list of the selected variables has been compiled. (Max)
