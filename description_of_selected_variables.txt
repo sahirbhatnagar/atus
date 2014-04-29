@@ -2,31 +2,36 @@
 (For non-binary categorical variables, the number of factors in indicated between parentheses)
 
 Name        	Description
-TUCASEID	ID used by ATUS
-TUYEAR (10)	Year in which the data was gathered
-TUMONTH (12)	Month in which the data was gathered
+TUCASEID      	ID used by ATUS
+TUYEAR (10)	    Year in which the data was gathered
+TUMONTH (12)	  Month in which the data was gathered
 TUDIARYDAY (7)	Day of the week on which the data was gathered
-TRHOLIDAY 	If the diary day was a holiday
-GEREG (4)	Region of USA where the respondent resides
-FAMINC 		Family income *this data is missing for 10% of respondents*
-PEHSPNON	If the respondent is hispanic
-PEMARITL (6)	Marital status
-TESEX		Sex of respondent
-TEAGE		Age of respondent
-TRHHCHILD	Presence of household children
-TRNHHCHILD	Presence of non-household children
-TROHHCHILD	Presence of own (i.e. the respondent's) household children
-TRSPPRES	Presence of spouse/unmarried partner in household
-TELFS (5)	Labor force status
-HETELHHD	If there is a telephone in the house
-PEAFNOW		If in the armed forces
-PEEDUCA (5) 	Highest level of education completed
-PRCITSHP (5)	Citizenship status
-PTDTRACE (5)	Race of respondent
-TRERNWA		Weekly earnings *more reliable than family income*
-TEMJOT (3)	No job, one job, or more than one job
-TRDPFTPT (3)	No job, or full/part-time job
-TEHRUSLT	Total hours usually worked in a week
-EDUC (5)	Not enrolled at school; HS/college or university, and Full/part-time
+TRHOLIDAY 	    If the diary day was a holiday
+GEREG (4)	      Region of USA where the respondent resides
+FAMINC 	    	  Family income *this data is missing for 10% of respondents*
+PEHSPNON	      If the respondent is hispanic
+PEMARITL (6)	  Marital status
+TESEX		        Sex of respondent
+TEAGE		        Age of respondent
+TRHHCHILD	      Presence of household children
+TRNHHCHILD	    Presence of non-household children
+TROHHCHILD	    Presence of own (i.e. the respondent's) household children
+TRSPPRES	      Presence of spouse/unmarried partner in household
+TELFS (5)	      Labor force status
+HETELHHD	      If there is a telephone in the house
+PEAFNOW		      If in the armed forces
+PEEDUCA (5) 	  Highest level of education completed
+PRCITSHP (5)	  Citizenship status
+PTDTRACE (5)	  Race of respondent
+TRERNWA		      Weekly earnings *more reliable than family income*
+TEMJOT (3)	    No job, one job, or more than one job
+TRDPFTPT (3)	  No job, or full/part-time job
+TEHRUSLT	      Total hours usually worked in a week
+EDUC (5)	      Not enrolled at school; HS/college or university, and Full/part-time
+TVTIME          Time spent watching television (sum of t120303 and t120304)
+TVIND           Whether the respondent watched TV
+ECON            Economic measure *see pca.R*
+
+Variables not included in dataset, but used for computing the tv time
 t120303		Number of minutes spent watching non-religious television and movies
 t120304		Number of minutes spent watching religious television and movies
