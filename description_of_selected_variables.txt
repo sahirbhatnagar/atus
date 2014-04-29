@@ -1,17 +1,18 @@
 ### Selected variables ###
 (For non-binary categorical variables, the number of factors in indicated between parentheses)
+(The variables used for weighting are underlined)
 
 Name        	Description
 TUCASEID      	ID used by ATUS
 TUYEAR (10)	    Year in which the data was gathered
 TUMONTH (12)	  Month in which the data was gathered
-TUDIARYDAY (7)	Day of the week on which the data was gathered
+_TUDIARYDAY_ (7)	Day of the week on which the data was gathered
 TRHOLIDAY 	    If the diary day was a holiday
-GEREG (4)	      Region of USA where the respondent resides
+_GEREG_ (4)	      Region of USA where the respondent resides
 FAMINC 	    	  Family income *this data is missing for 10% of respondents*
-PEHSPNON	      If the respondent is hispanic
+_PEHSPNON_	      If the respondent is hispanic
 PEMARITL (6)	  Marital status
-TESEX		        Sex of respondent
+_TESEX_		        Sex of respondent
 TEAGE		        Age of respondent
 TRHHCHILD	      Presence of household children
 TRNHHCHILD	    Presence of non-household children
@@ -22,7 +23,7 @@ HETELHHD	      If there is a telephone in the house
 PEAFNOW		      If in the armed forces
 PEEDUCA (5) 	  Highest level of education completed
 PRCITSHP (5)	  Citizenship status
-PTDTRACE (5)	  Race of respondent
+_PTDTRACE_ (5)	  Race of respondent
 TRERNWA		      Weekly earnings *more reliable than family income*
 TEMJOT (3)	    No job, one job, or more than one job
 TRDPFTPT (3)	  No job, or full/part-time job
