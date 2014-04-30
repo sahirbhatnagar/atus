@@ -5,6 +5,10 @@
 ## Last updated: April 30, 2014
 ############################
 
+*In order to use this package with categorical variables,
+*we need to create dummy variables and use the index parameter
+*to indicate which variables are grouped
+*for an example, see logistic_model.R
 
 *The gprlasso package allows us to fit a group-lasso penalized regression model to any
 *model defined by the user. The model is specified through the function grpl.model
