@@ -1,0 +1,57 @@
+############################
+## Help file for how to use
+## the R package grplasso
+## Created by Max on April 30, 2014
+## Last updated: April 30, 2014
+############################
+
+
+*The gprlasso package allows us to fit a group-lasso penalized regression model to any
+*model defined by the user. The model is specified through the function grpl.model
+*The package comes with three already defined models, and I have reproduced
+*their definition below so that we have a model for the gamma model
+
+## Logistic Regression 
+LogReg <- function(){
+  grpl.model(invlink   = function(eta) 1 / (1 + exp(-eta)),
+             link      = function(mu) log(mu / (1 - mu)),
+             nloglik   = function(y, eta, weights, ...)
+               -sum(weights * (y * eta - log(1 + exp(eta)))),
+             ngradient = function(x, y, mu, weights, ...)
+               -crossprod(x, weights * (y - mu)),
+             nhessian  = function(x, mu, weights, ...)
+               crossprod(x, weights * mu * (1 - mu) * x),
+             check     = function(y) all(y %in% c(0, 1)),
+             name      = "Logistic Regression Model",
+             comment   = "Binary response y has to be encoded as 0 and 1")
+}
+
+## Linear Regression
+LinReg <- function(){
+  grpl.model(invlink  = function(eta) eta,
+             link  = function(mu) mu,
+             nloglik   = function(y, eta, weights, ...)
+               sum(weights * (y - eta)^2),
+             ngradient = function(x, y, mu, weights, ...)
+               -2 * crossprod(x, weights * (y - mu)),
+             nhessian  = function(x, mu, weights, ...)
+               2 * crossprod(x, weights * x),
+             check     = function(y) TRUE,
+             name      = "Linear Regression Model",
+             comment   = "Use update.hess=\"lambda\" in grpl.control because the Hessian is constant")
+}
+
+## Poisson Regression
+PoissReg <- function(){
+  grpl.model(invlink    = function(eta) exp(eta),
+             link       = function(mu) log(mu),
+             nloglik    = function(y, eta, weights, ...)
+               sum(weights * (exp(eta) - y * eta)),
+             ngradient  = function(x, y, mu, weights, ...)
+               -crossprod(x, weights * (y - mu)),
+             nhessian   = function(x, mu, weights, ...)
+               crossprod(x, weights * mu * x),
+             check      = function(y) all(y >= 0) & all(y == ceiling(y)),
+             name       = "Poisson Regression Model",
+             comment    = "")
+}
