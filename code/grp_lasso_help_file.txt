@@ -10,6 +10,8 @@
 *to indicate which variables are grouped
 *for an example, see logistic_model.R
 
+*The design matrix and the response vector need to be arrays, not data frames
+
 *The gprlasso package allows us to fit a group-lasso penalized regression model to any
 *model defined by the user. The model is specified through the function grpl.model
 *The package comes with three already defined models, and I have reproduced
