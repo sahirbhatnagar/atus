@@ -6,7 +6,7 @@
 # NOTE:
 ##################################
 
-setwd("~/atus/data")
+setwd("~/git_repositories/atus.git/data")
 
 #Initial data read
 gdp_data = read.table("real_gdp_data.txt", header=TRUE)
@@ -52,6 +52,10 @@ lines(1:length(employment_scale), employment_scale, col='purple')
 #looking at negative of pca scores to better compare to data
 lines(1:length(gdp_scale), -pca_econ$scores[,1], col=6, lty=2)
 lines(1:length(gdp_scale), -pca_econ$scores[,2], col=9, lty=2)
+
+#legend("bottomleft", c("gdp", "dow", "sp500", "employ", "PCA1", "PCA2"), 
+#      col=c('red', 'blue', 'green', 'purple', 6, 9),
+#       lty=c(1,1,1,1,2,2), xpd=TRUE, horiz=TRUE)
 
 
 
