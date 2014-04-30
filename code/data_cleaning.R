@@ -62,10 +62,11 @@ DT <- subset(DT, select=(colnames(DT) %nin% c("HUFAMINC", "HEFAMINC")))
 
 #there are too many race codes; reducing to five
 
-DT$PTDTRACE <- 2*(DT$PTDTRACE %in% c(6,10,11,12,15,16,22,23,25,26)) +
-               3*(DT$PTDTRACE %in% c(7,13,17,24)) +
-               4*(DT$PTDTRACE %in% c(8,19)) +
-               5*(DT$PTDTRACE %in% c(9,14,18,20,21))
+DT$PTDTRACE <- 1*(DT$PTDTRACE == 1) +
+               2*(DT$PTDTRACE %in% c(2,6,10,11,12,15,16,22,23,25,26)) +
+               3*(DT$PTDTRACE %in% c(3,7,13,17,24)) +
+               4*(DT$PTDTRACE %in% c(4,8,19)) +
+               5*(DT$PTDTRACE %in% c(5,9,14,18,20,21))
 
 #there are too many codes for level of education; reducing to five
   
@@ -86,7 +87,7 @@ DT$TRSPPRES <- 0*(DT$TRSPPRES == 3) +
 #Code: 1: not at school; 2:HS Full-time; 3: HS Part-time
 #4: College/university Full-time; 5: College/university Part-time
 
-DT$EDUC <- 1*(DT$TESCHENR %in% c(-1,2)) +
+DT$EDUC <- 1*(DT$TESCHENR %in% c(-1,-3,2)) +
            2*(DT$TESCHFT==1 & DT$TESCHLVL==1) +
            3*(DT$TESCHFT==2 & DT$TESCHLVL==1) +
            4*(DT$TESCHFT==1 & DT$TESCHLVL==2) +
@@ -103,6 +104,24 @@ DT$TEMJOT   <- as.numeric(DT$TELFS %nin% c(3,4,5))*DT$TEMJOT
 DT$TRDPFTPT <- as.numeric(DT$TELFS %nin% c(3,4,5))*DT$TRDPFTPT
 DT$TEHRUSLT <- as.numeric(DT$TELFS %nin% c(3,4,5))*DT$TEHRUSLT
 
+#There are still some missing values with these variables
+#Since they represent less than 1% of the data
+#we will simply randomly assign them a value among the observations
+
+DT$TRERNWA  <- sample(unique(DT$TRERNWA[DT$TRERNWA>-1]), size=nrow(DT), replace=TRUE)*as.numeric(DT$TRERNWA==-1) + 
+               DT$TRERNWA*as.numeric(DT$TRERNWA!=-1)
+DT$TEMJOT   <- 0*as.numeric(DT$TEMJOT==-1) + 
+               DT$TEMJOT*as.numeric(DT$TEMJOT!=-1)
+DT$TRDPFTPT <- 0*as.numeric(DT$TRDPFTPT==-1) + 
+               DT$TRDPFTPT*as.numeric(DT$TRDPFTPT!=-1)
+DT$TEHRUSLT <- sample(unique(DT$TEHRUSLT[DT$TEHRUSLT>-1]), size=nrow(DT), replace=TRUE)*as.numeric(DT$TEHRUSLT %in% c(-4,-1)) + 
+               DT$TEHRUSLT*as.numeric(DT$TEHRUSLT %nin% c(-4,-1))
+
+#We then shift TEMJOT and TRDPFTPT so that the baseline is 1
+
+DT$TEMJOT   <- DT$TEMJOT + 1
+DT$TRDPFTPT <- DT$TRDPFTPT + 1
+
 #The binary variables are coded 1:YES, 2:NO
 #to simplify analysis we code them 1:YES, 0:NO
 
@@ -110,7 +129,6 @@ DT$TRHHCHILD  <- 2-DT$TRHHCHILD
 DT$TRNHHCHILD <- 2-DT$TRNHHCHILD
 DT$TROHHCHILD <- 2-DT$TROHHCHILD
 DT$HETELHHD   <- 2-DT$HETELHHD
-DT$PEAFNOW    <- 2-DT$PEAFNOW
 DT$PEHSPNON   <- 2-DT$PEHSPNON
 DT$TESEX      <- 2-DT$TESEX #1:male; 0:female
 
