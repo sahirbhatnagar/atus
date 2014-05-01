@@ -115,16 +115,63 @@ lamb.max <- lambdamax(X, Y, index)
 
 #we define a lambda grid
 lambda <- seq(50, lamb.max, length.out=25)
+lambda <- sort(lambda, decreasing=TRUE)
 
 #we fit the penalized model
-fit <- grplasso(X, Y, index, model = LogReg(), lambda=lambda, center = TRUE, standardize = TRUE)
+fit <- grplasso(X, Y, index, model = LogReg(), lambda=lambda, 
+                center = TRUE, standardize = TRUE)
 
 #we can compute the BIC
-BIC <- rep(0,26)
+BIC <- rep(0,length(lambda))
 log.lik <- LogReg()@nloglik
 matrix <- predict(fit, type='link')
 
 
-for(i in 1:26){
+for(i in 1:length(lambda)){
   BIC[i] <- 2*log.lik(Y, matrix[,i], rep(1,length(Y))) + log(nrow(X))*sum(fit$coef[,i]!=0)
 }
+
+#10-fold cross validation
+library(caret)
+library(pROC)
+
+split <- createFolds(Y, k=10)
+
+AUC.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+
+for(i in 1:10){
+  
+  Y.val <- Y[split[[i]]]; X.val <- X[split[[i]],]
+  Y.train <- Y[-split[[i]]]; X.train <- X[-split[[i]],]
+  
+  fit.cv <- grplasso(X.train, Y.train, index, model = LogReg(), lambda=lambda, 
+                     center = TRUE, standardize = TRUE)
+  
+  pred <- predict(fit.cv, newdata=X.val, type='link')
+  
+  for(j in 1:ncol(pred)){
+    AUC.mat[i,j] <- auc(Y.val, pred[,j])
+  }
+  
+  
+}
+
+AUC.mean <- apply(AUC.mat, 2, mean)
+
+lambda.max <- lambda[which.max(AUC.mean)]
+
+#apply the 1-sd rule
+sd <- sd(AUC.mean)
+AUC.within.1sd <- AUC.mean[AUC.mean>max(AUC.mean)-sd]
+lambda.within.1sd <- lambda[AUC.mean %in% AUC.within.1sd]
+
+lambda.opt <- names(which.min(apply(fit$coeff[,colnames(fit$coeff) %in% lambda.within.1sd], 
+                                    2, function(x) sum(x!=0))))
+lambda.opt <- as.numeric(lambda.opt)
+
+
+coeff <- fit$coeff[,colnames(fit$coeff)==lambda.opt]
+model <- coeff!=0
+
+#the selected predictors
+names(model[model])[-1]
