@@ -1,0 +1,34 @@
+##################################
+# JAGS model to be used in jags_model.R
+# Created by kevisco, May 1st, 2014
+# Updated May 1st, 2014
+# hosted on Github repo 'sahirbhatnagar/atus'
+# NOTE:
+##################################
+
+model {
+    for (i in 1:N) {
+        RESPONSE[i] ~ dpois(mu[i])
+        mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
+	      	 			      				  		   + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i])
+
+    }
+
+
+    
+    for (i in 1:5) {
+    	alpha_race ~ dnorm(0.0,0.001)    
+    }
+
+    alpha_sex ~ dnorm(0.0,0.001)
+
+    alpha_hispanic ~ dnorm(0.0,0.001)
+
+    for (i in 1:4) {
+    	alpha_region[i] ~ dnorm(0.0,0.001)
+    }
+
+    for (i in 1:7) {
+    	alpha_diary[i] ~ dnorm(0.0,0.001)	
+    }
+}
