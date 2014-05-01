@@ -59,11 +59,14 @@ lines(1:length(gdp_scale), -pca_econ$scores[,2], col=9, lty=2)
 
 
 
-#Final data structure for economy and time by month
-ECON = cbind(-pca_econ$scores[,1], -pca_econ$scores[,2], 1:length(pca_econ$scores[,1]))
+#Final data structure for economy and time by quarter
+ECON = as.data.frame(cbind(-pca_econ$scores[,1], 
+                           -pca_econ$scores[,2], 1:length(pca_econ$scores[,1])))
+names(ECON) = c("pc1", "pc2", "quarter")
 
-
-
+#Write to file...
+#write(t(names(ECON)), file="~/atus/data/econ_data.txt", ncolumns=3)
+#write(t(as.matrix(ECON)), file="~/atus/data/econ_data.txt", ncolumns=length(names(ECON)), append=TRUE)
 
 
 
