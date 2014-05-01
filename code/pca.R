@@ -8,6 +8,9 @@
 
 setwd("~/git_repositories/atus.git/data")
 
+#On kevisco's laptop
+#setwd("~/atus/data")
+
 #Initial data read
 gdp_data = read.table("real_gdp_data.txt", header=TRUE)
 dow_data = read.table("dow_data.txt", header=TRUE)
