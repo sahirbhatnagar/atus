@@ -152,6 +152,8 @@ source("~/git_repositories/atus.git/code/pca.R")
 ECON<-as.data.frame(ECON[,-3])
 colnames(ECON) <- c("ECON1", "ECON2")
 
+DT$ECON1 = rep(0, length(DT$TUYEAR))
+DT$ECON2 = rep(0, length(DT$TUYEAR))
 for(year in 2003:2012){
   
   lag <- 4*(year-2003)
@@ -160,12 +162,18 @@ for(year in 2003:2012){
       ECON$ECON1[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
       ECON$ECON1[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
       ECON$ECON1[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
+
   
   DT$ECON2 <- DT$ECON2 + ECON$ECON2[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
     ECON$ECON2[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
     ECON$ECON2[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
     ECON$ECON2[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
 }
+
+#Including quarter... from 1 to 40
+DT$QUARTER = rep(0, length(DT$TUYEAR))
+DT$QUARTER = 4*(DT$TUYEAR-2003) + floor((DT$TUMONTH-1)/3) + 1
+
 
 save(DT, file="data.Rda")
 
