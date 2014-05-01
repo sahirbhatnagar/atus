@@ -1,13 +1,16 @@
 ##################################
 # R source code file used to clean data
 # Created by Maxime, March 12, 2014
-# Updated April 29, 2014
+# Updated May 1st, 2014
 # hosted on Github repo 'sahirbhatnagar/atus'
 # NOTE:
 ##################################
 
 # directory where the data is located
 setwd("~/Biostats PhD/SSC 2014 Case study/")
+
+#Set directory for kevisco -- comment this out if you need to
+#setwd("~/Documents/casestudy")
 
 library(data.table)
 library(bit64)
@@ -143,6 +146,9 @@ DT <- subset(DT, select=(colnames(DT) %nin% c("t120303", "t120304")))
 #Finally, we add the economic variable
 source("~/git_repositories/atus.git/code/pca.R")
 
+#On kevisco's laptop
+#source("~/atus/code/pca.R")
+
 ECON<-as.data.frame(ECON[,-3])
 colnames(ECON) <- c("ECON1", "ECON2")
 
@@ -150,12 +156,12 @@ for(year in 2003:2012){
   
   lag <- 4*(year-2003)
   
-  DT$ECON1 <- ECON$ECON1[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
+  DT$ECON1 <- DT$ECON1 + ECON$ECON1[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
       ECON$ECON1[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
       ECON$ECON1[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
       ECON$ECON1[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
   
-  DT$ECON2 <- ECON$ECON2[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
+  DT$ECON2 <- DT$ECON2 + ECON$ECON2[1+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 1:3) +
     ECON$ECON2[2+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 4:6) +
     ECON$ECON2[3+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 7:9) +
     ECON$ECON2[4+lag]*(DT$TUYEAR==year & DT$TUMONTH %in% 10:12)
@@ -164,3 +170,4 @@ for(year in 2003:2012){
 save(DT, file="data.Rda")
 
 rm(ECON, dow_data, econ_measures, gdp_data, sp500_data, unemployment_data, count, dow_quart, dow_scale, employment_quart, employment_scale, gdp_quart, gdp_scale, pca_econ, sp500_quart, sp500_scale, unemployment_quart, year, i, lag)
+
