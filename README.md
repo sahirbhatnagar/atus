@@ -151,3 +151,10 @@ Data cleaning/Variable selection (2014/04/29)
 
 * The data cleaning process is now completed, and the list of the selected variables has been compiled. (Max)
 * Update (May 1st, 2014): The "cleaned" data can be found in "data.Rda".  There are also files called "datagam.txt" and "datalog.txt" which will be used for JAGS. (Kevin) 
+
+Regularization of the logistic model (2014/05/01)
+---------------------------------
+
+* The model has been fitted, 10-fold cross-validation (+ 1-sigma rule) has been used to tune the model. The current selected model includes five covariates: presence of household children (TRHHCHILD), age of respondent (TEAGE), sex of respondent (TESEX), usual number of hours worked in a week (TEHRUSLT), and whether the respondent has more than one job (TEMJOT).
+* We might want to discuss some of details of the method and see if we agree on the basics.
+
