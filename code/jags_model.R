@@ -15,7 +15,7 @@ library(rjags)
 
 #We first create the datafiles for JAGS
 
-outpath <- "~/git_repositories/atus/data"
+outpath <- "~/atus/data"
 
 datalist.log <- list('DIARYDAY'=DT$TUDIARYDAY, 
                      'REGION'=DT$GEREG, 
