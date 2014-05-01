@@ -1,3 +1,11 @@
+##################################
+# JAGS model to be used in jags_model.R
+# Created by kevisco, May 1st, 2014
+# Updated May 1st, 2014
+# hosted on Github repo 'sahirbhatnagar/atus'
+# NOTE:
+##################################
+
 model {
 
 }
