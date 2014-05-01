@@ -149,4 +149,5 @@ For next week:
 Data cleaning/Variable selection (2014/04/29)
 ---------------------------------
 
-The data cleaning process is now completed, and the list of the selected variables has been compiled. (Max)
+* The data cleaning process is now completed, and the list of the selected variables has been compiled. (Max)
+* Update (May 1st, 2014): The "cleaned" data can be found in "data.Rda".  There are also files called "datagam.txt" and "datalog.txt" which will be used for JAGS. (Kevin) 
