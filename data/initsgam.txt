@@ -1,0 +1,5 @@
+structure(list(alpha_diary = c(1, 1, 1, 1, 1, 1, NA), alpha_region = c(1, 
+1, 1, NA), alpha_hispanic = 1, alpha_sex = 1, alpha_race = c(1, 
+1, 1, 1, NA), beta_econ_1 = 1, beta_econ_2 = 2), .Names = c("alpha_diary", 
+"alpha_region", "alpha_hispanic", "alpha_sex", "alpha_race", 
+"beta_econ_1", "beta_econ_2"))
