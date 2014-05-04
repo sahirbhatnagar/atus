@@ -1,0 +1,56 @@
+model{
+  
+  # For the ones trick
+  C <- 10000
+  
+  # for every observation
+  for(i in 1:N){
+    
+    # define the logistic regression model, where w is the probability of occurance.
+    # use the logistic transformation exp(z)/(1 + exp(z)), where z is a linear function
+    logit(w[i]) <- zeta[i]
+    zeta[i] <- gamma0 + gamma1*MPD[i] + gamma2*MTD[i] + gamma3*int[i] + gamma4*MPD[i]*int[i] + gamma5*MTD[i]*int[i]
+    
+    # define the gamma regression model for the mean. use the log link 
+    # to ensure positive, nonzero mu
+    # pow(x,z) is the Power function
+    mu[i] <- pow(eta[i], -1)
+    eta[i] <- beta0 + beta1*MPD[i] + beta2*MTD[i] + beta3*int[i] + beta4*MPD[i]*int[i] + beta5*MTD[i]*int[i]
+    
+    # redefine the mu and sd of the continuous part into the shape and scale parameters
+    shape[i] <- pow(mu[i], 2) / pow(sd, 2)
+    rate[i] <- mu[i] / pow(sd, 2)
+    
+    # for readability, define the log-likelihood of the gamma here
+    logGamma[i] <- log(dgamma(y[i], shape[i], rate[i]))
+    
+    # define the total likelihood, where the likelihood is (1 - w) if y < 0.0001 (z = 0) or
+    # the likelihood is w * gammalik if y >= 0.0001 (z = 1). So if z = 1, then the first bit must be
+    # 0 and the second bit 1. Use 1 - z, which is 0 if y > 0.0001 and 1 if y < 0.0001
+    logLik[i] <- (1 - z[i]) * log(1 - w[i]) + z[i] * ( log(w[i]) + logGamma[i] )
+    
+    Lik[i] <- exp(logLik[i])
+    
+    # Use the ones trick
+    p[i] <- Lik[i] / C
+    ones[i] ~ dbern(p[i])
+  }
+  
+  # PRIORS
+  beta0 ~ dnorm(0, 0.0001)
+  beta1 ~ dnorm(0, 0.0001)
+  beta2 ~ dnorm(0, 0.0001)
+  beta3 ~ dnorm(0, 0.0001)
+  beta4 ~ dnorm(0, 0.0001)
+  beta5 ~ dnorm(0, 0.0001)
+  
+  gamma0 ~ dnorm(0, 0.0001)
+  gamma1 ~ dnorm(0, 0.0001)
+  gamma2 ~ dnorm(0, 0.0001)
+  gamma3 ~ dnorm(0, 0.0001)
+  gamma4 ~ dnorm(0, 0.0001)
+  gamma5 ~ dnorm(0, 0.0001)
+  
+  sd ~ dgamma(2, 2)
+  
+}
