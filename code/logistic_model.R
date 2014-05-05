@@ -7,8 +7,10 @@
 # NOTE: 
 ##################################
 
+
 # directory where the data and list of variables are located
 setwd("~/git_repositories/atus.git/data")
+sink("~/git_repositories/atus.git/code/logistic_model.log")
 
 # import the data
 source("~/git_repositories/atus.git/code/data_cleaning.R")
@@ -111,7 +113,7 @@ index <- c(NA, 1:13, rep(15,9), rep(16,11), rep(17,6), rep(18,3), rep(19,5),
          rep(20,4), rep(21,4), rep(22,4), rep(23,4), rep(24,2), rep(25,2), rep(26,4))
 
 #find max value of tuning parameter that kicks out all regression parameters
-lamb.max <- lambdamax(X, Y, index)
+lamb.max <- lambdamax(X, Y, index, model=LogReg())
 
 #we define a lambda grid
 lambda <- seq(50, lamb.max, length.out=25)
@@ -131,6 +133,8 @@ for(i in 1:length(lambda)){
   BIC[i] <- 2*log.lik(Y, matrix[,i], rep(1,length(Y))) + log(nrow(X))*sum(fit$coef[,i]!=0)
 }
 
+BIC
+
 #10-fold cross validation
 library(caret)
 library(pROC)
@@ -147,7 +151,7 @@ for(i in 1:10){
   fit.cv <- grplasso(X.train, Y.train, index, model = LogReg(), lambda=lambda, 
                      center = TRUE, standardize = TRUE)
   
-  pred <- predict(fit.cv, newdata=X.val, type='link')
+  pred <- predict(fit.cv, newdata=X.val, type='response')
   
   for(j in 1:ncol(pred)){
     AUC.mat[i,j] <- auc(Y.val, pred[,j])
@@ -175,3 +179,5 @@ model <- coeff!=0
 
 #the selected predictors
 names(model[model])[-1]
+
+sink()
