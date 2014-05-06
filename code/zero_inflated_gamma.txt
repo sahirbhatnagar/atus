@@ -14,11 +14,14 @@ model{
     # define the gamma regression model for the mean. use the log link 
     # to ensure positive, nonzero mu
     # pow(x,z) is the Power function
-    mu[i] <- pow(eta[i], -1)
-    eta[i] <- beta0 + beta1*MPD[i] + beta2*MTD[i] + beta3*int[i] + beta4*MPD[i]*int[i] + beta5*MTD[i]*int[i]
-    
+    mu[i] <- pow(eta[i], 1)
+    eta[i] <- alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex*SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i]
+
     # redefine the mu and sd of the continuous part into the shape and scale parameters
-    shape[i] <- pow(mu[i], 2) / pow(sd, 2)
+    # shape = mu^2 / var(y), see Faraway pg.149 for details, note what he defines as the scale should
+    # actually be the rate lambda. 
+    # rate = mu / var(y)
+    shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
     rate[i] <- mu[i] / pow(sd, 2)
     
     # for readability, define the log-likelihood of the gamma here
@@ -37,19 +40,22 @@ model{
   }
   
   # PRIORS
-  beta0 ~ dnorm(0, 0.0001)
-  beta1 ~ dnorm(0, 0.0001)
-  beta2 ~ dnorm(0, 0.0001)
-  beta3 ~ dnorm(0, 0.0001)
-  beta4 ~ dnorm(0, 0.0001)
-  beta5 ~ dnorm(0, 0.0001)
-  
-  gamma0 ~ dnorm(0, 0.0001)
-  gamma1 ~ dnorm(0, 0.0001)
-  gamma2 ~ dnorm(0, 0.0001)
-  gamma3 ~ dnorm(0, 0.0001)
-  gamma4 ~ dnorm(0, 0.0001)
-  gamma5 ~ dnorm(0, 0.0001)
+    for (i in 1:4) {
+      alpha_race ~ dnorm(0.0,0.001)    
+    }
+    alpha_race[5] <- 0.0
+
+    alpha_sex ~ dnorm(0.0,0.001)
+
+    alpha_hispanic ~ dnorm(0.0,0.001)
+
+    for (i in 1:4) {
+    	alpha_region[i] ~ dnorm(0.0,0.001)
+    }
+
+    for (i in 1:7) {
+    	alpha_diary[i] ~ dnorm(0.0,0.001)	
+    }
   
   sd ~ dgamma(2, 2)
   
