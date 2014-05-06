@@ -26,13 +26,15 @@ list.modules()
 #unload.module("glm")
 #list.modules()
 
+xtabs(~DT$QUARTER)
+
 #DT with non zero indicators 
 DT <- DT[TVIND!=0]
 #Sample subset of survey data
 set.seed(1234)
-prop <- 0.1  
+prop <- 0.01  
 DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
-
+xtabs(~DTS$QUARTER)
 
 #We first create the datafiles for JAGS
 
@@ -46,6 +48,7 @@ datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY,
                      'RACE'=DTS$PTDTRACE, 
                      'ECON1'=DTS$ECON1,
                      'ECON2'=DTS$ECON2,
+                     'QUARTER'=DTS$QUARTER,
                      'RESPONSE'=DTS$TVTIME, 
                      'N'=nrow(DTS))
 dput(datalist.gam, file.path(outpath, "datagam.txt"))
@@ -63,11 +66,14 @@ dput(datalist.gam, file.path(outpath, "datagam.txt"))
 model <- jags.model(file.path(inpath, 'gamma_model.txt'), data=datalist.gam, 
                     n.chains=2, n.adapt=10000, quiet=FALSE)
 
-ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
-                           "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
+# ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
+#                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
+#summary(ss)
 
-ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2"), 10000, thin=10)
-
-summary(ss)
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma", "logRR"), 10000, thin=10)
 
 summary(ss_econ)
+dat <- as.matrix(ss_econ)
+boxplot(dat[,3:42],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " - ",hat(beta)[other]," for 29 calendar years")))
+boxplot(dat[,43:82],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " - ",hat(beta)[other]," for 29 calendar years")))
+

@@ -9,29 +9,26 @@
 model{
   
   # for every observation
+
   for(i in 1:N){
+    
     # define the gamma regression model for the mean. use the log link 
     # to ensure positive, nonzero mu
     # pow(x,z) is the Power function
     # JAGS tends to break if lambda is exactly zero, thus the "+ 0.00001"    
     
-        # for readability, define the log-likelihood of the gamma here
-    logGamma[i] <- log(dgamma(RESPONSE[i], shape[i], rate[i]))
-
-    shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
-    rate[i] <- mu[i] / pow(sd, 2)
-
-    mu[i] <- alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex*SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i] + 0.00001
-
+    RESPONSE[i] ~ dgamma(shape[i], rate[i])
+    
     # redefine the mu and sd of the continuous part into the shape and scale parameters
     # shape = mu^2 / var(y), see Faraway pg.149 for details, 
     # note what he defines as the scale should
     # actually be the rate lambda. 
     # rate = mu / var(y)
 
-
-
-
+    shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
+    rate[i] <- mu[i] / pow(sd, 2)
+    
+    mu[i] <- alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex*SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i] + gamma[QUARTER[i]] + 0.00001
     
   }
   
@@ -42,25 +39,38 @@ model{
 
     alpha_hispanic ~ dnorm(0.0,0.001)
 
-    for (i in 1:3) {
+    for (i in 1:4) {
       alpha_region[i] ~ dnorm(0.0,0.001)
     }
-    alpha_region[4] <- 0.0
-
-    for (i in 1:6) {
+    
+    for (i in 1:7) {
     	alpha_diary[i] ~ dnorm(0.0,0.001)	
     }
-    alpha_diary[7] <- 0.0
+    
 
-    for (i in 1:4) {
+    for (i in 1:5) {
       alpha_race[i] ~ dnorm(0.0,0.001)    
     }
-    alpha_race[5] <- 0.0
-
+    
     beta_econ_1 ~ dnorm(0.0,0.001)
     beta_econ_2 ~ dnorm(0.0,0.001)
-  
-  sd ~ dgamma(0.001, 0.001)
-  #sd ~ dunif(0.001, 100)
+
+    gammamean[1] <- 0.0
+    gammaprec[1] <- phi * 0.001
+    gammamean[2] <- 0.0
+    gammaprec[2] <- phi * 0.001
+    for (i in 3:40) {
+        gammamean[i] <- 2 * gamma[i-1] - gamma[i-2]
+        gammaprec[i] <- phi
+    }
+    
+    for (i in 1:40) {
+    gamma[i] ~ dnorm(gammamean[i],gammaprec[i])
+    logRR[i] <- gamma[i]-gamma[1]
+    }
+    phi ~ dgamma(0.001,0.001)
+    
+    sd ~ dgamma(0.001, 0.001)
+    #sd ~ dunif(0.001, 100)
   
 }
