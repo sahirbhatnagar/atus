@@ -158,3 +158,8 @@ Regularization of the logistic model (2014/05/01)
 * The model has been fitted, 10-fold cross-validation (+ 1-sigma rule) has been used to tune the model. The current selected model includes five covariates: presence of household children (TRHHCHILD), age of respondent (TEAGE), sex of respondent (TESEX), usual number of hours worked in a week (TEHRUSLT), and whether the respondent has more than one job (TEMJOT).
 * We might want to discuss some of details of the method and see if we agree on the basics.
 
+Model discussion Sahir, Max, Kevin May 15th, 2014
+---------------------------------
+
+* Linear model to try (with appropriate link): alpha+diary_day+region+race+sex+hispanic+b1[QUARTER]\*econ1+b2[QUARTER]\*econ2+gamma[YEAR,MONTH]
+
