@@ -1,7 +1,7 @@
 ##################################
 # R source code file used to fit gamma_model.txt for TVTIME > 0
 # Created by Sy, May 3rd, 2014
-# Updated April 3rd, 2014
+# Updated May 6th, 2014
 # hosted on Github repo 'sahirbhatnagar/atus'
 # NOTE:
 ##################################
@@ -11,9 +11,9 @@
 #On kevisco's laptop
 # setwd("~/atus/data")
 # On Sy's laptop
-#setwd("~//git_repositories/atus/data/")
+setwd("~//git_repositories/atus/data/")
 # On Sy's desktop
-setwd("~//git_repositories//atus.git//data/")
+#setwd("~//git_repositories//atus.git//data/")
 load("data.Rda")
 
 library(data.table)
@@ -26,20 +26,24 @@ list.modules()
 #unload.module("glm")
 #list.modules()
 
-xtabs(~DT$QUARTER)
+xtabs(~DT$TUYEAR)
 
 #DT with non zero indicators 
 DT <- DT[TVIND!=0]
 #Sample subset of survey data
 set.seed(1234)
-prop <- 0.01  
+prop <- 0.005
 DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
 xtabs(~DTS$QUARTER)
 
 #We first create the datafiles for JAGS
 
-outpath <- "~//git_repositories//atus.git//data"
-inpath <- "~//git_repositories//atus.git//code"
+# outpath <- "~//git_repositories//atus.git//data"
+# inpath <- "~//git_repositories//atus.git//code"
+
+outpath <- "~//git_repositories//atus//data"
+inpath <- "~//git_repositories//atus//code"
+
 
 datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY, 
                      'REGION'=DTS$GEREG, 
@@ -49,6 +53,8 @@ datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY,
                      'ECON1'=DTS$ECON1,
                      'ECON2'=DTS$ECON2,
                      'QUARTER'=DTS$QUARTER,
+                     'YEAR'=DTS$TUYEAR-2012+1,
+                     'MONTH'=DTS$TUMONTH,
                      'RESPONSE'=DTS$TVTIME, 
                      'N'=nrow(DTS))
 dput(datalist.gam, file.path(outpath, "datagam.txt"))
@@ -70,10 +76,30 @@ model <- jags.model(file.path(inpath, 'gamma_model.txt'), data=datalist.gam,
 #                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
 #summary(ss)
 
-ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma", "logRR"), 10000, thin=10)
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
 
 summary(ss_econ)
 dat <- as.matrix(ss_econ)
-boxplot(dat[,3:42],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " - ",hat(beta)[other]," for 29 calendar years")))
-boxplot(dat[,43:82],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " - ",hat(beta)[other]," for 29 calendar years")))
+boxplot(dat[,1:40],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ1")),
+        xaxt="n")
+axis(1,at=1:40, 
+labels=c("Jan03","Apr03","Jul03","Oct03",
+         "Jan04","Apr04","Jul04","Oct04",
+         "Jan05","Apr05","Jul05","Oct05",
+         "Jan06","Apr06","Jul06","Oct06",
+         "Jan07","Apr07","Jul07","Oct07",
+         "Jan08","Apr08","Jul08","Oct08",
+         "Jan09","Apr09","Jul09","Oct09",
+         "Jan10","Apr10","Jul10","Oct10",
+         "Jan11","Apr11","Jul11","Oct11",
+         "Jan12","Apr12","Jul12","Oct12")
+,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=2)
+
+boxplot(dat[,c(seq(81,191,by=10),seq(82,192,by=10),
+               seq(83,193,by=10),seq(84,194,by=10),
+               seq(85,195,by=10),
+               seq(86,196,by=10),seq(87,197,by=10),
+               seq(88,198,by=10),seq(89,179,by=10),199,
+               seq(90,200,by=10))],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " - ",hat(beta)[other]," for 29 calendar years")))
 
