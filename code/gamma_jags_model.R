@@ -155,7 +155,7 @@ model_smooth <- jags.model(file.path(inpath, 'gamma_model_2.txt'), data=datalist
 ss_econ_smooth = coda.samples(model_smooth, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
 save.image(file="~/Dropbox/PhD/gamma_model_2.RData")
 
-load("gamma_model_2.RData")
+load("~/Dropbox/PhD/gamma_model_2.RData")
 summary(ss_econ)
 dat <- as.matrix(ss_econ)
 #econ1
