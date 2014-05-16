@@ -1,0 +1,195 @@
+\documentclass[final]{beamer}
+  \mode<presentation>
+  {
+% you can chose your theme here:
+\usetheme{ssc2014}
+% further beamerposter themes are available at 
+% http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php
+}
+  \usepackage{type1cm}
+  \usepackage{calc} 
+  \usepackage{times}
+  \usepackage{amsmath,amsthm, amssymb, latexsym}
+  \boldmath
+  \usepackage[english]{babel}
+  \usepackage[latin1]{inputenc}
+  \usepackage[orientation=landscape,width=71, height=35,debug]{beamerposter}
+  \title{SSC 2014 Case Study Competition}
+  \author{Sahir Bhatnagar, Kevin McGregor and Maxime Turgeon}
+  \institute{Department of Epidemiology, Biostatistics and Occupational Health, McGill University} 
+  \date{May 26, 2013}
+  
+\usepackage{environ}% Required for \NewEnviron, i.e. to read the whole body of the environment
+\makeatletter
+
+\newcounter{acolumn}%  Number of current column
+\newlength{\acolumnmaxheight}%   Maximum column height
+
+
+% `column` replacement to measure height
+\newenvironment{@acolumn}[1]{%
+    \stepcounter{acolumn}%
+    \begin{lrbox}{\@tempboxa}%
+    \begin{minipage}{#1}%
+}{%
+    \end{minipage}
+    \end{lrbox}
+    \@tempdimc=\dimexpr\ht\@tempboxa+\dp\@tempboxa\relax
+    % Save height of this column:
+    \expandafter\xdef\csname acolumn@height@\roman{acolumn}\endcsname{\the\@tempdimc}%
+    % Save maximum height
+    \ifdim\@tempdimc>\acolumnmaxheight
+        \global\acolumnmaxheight=\@tempdimc
+    \fi
+}
+
+% `column` wrapper which sets the height beforehand
+\newenvironment{@@acolumn}[1]{%
+    \stepcounter{acolumn}%
+    % The \autoheight macro contains a \vspace macro with the maximum height minus the natural column height
+    \edef\autoheight{\noexpand\vspace*{\dimexpr\acolumnmaxheight-\csname acolumn@height@\roman{acolumn}\endcsname\relax}}%
+    % Call original `column`:
+    \orig@column{#1}%
+}{%
+    \endorig@column
+}
+
+% Save orignal `column` environment away
+\let\orig@column\column
+\let\endorig@column\endcolumn
+
+% `columns` variant with automatic height adjustment
+\NewEnviron{acolumns}[1][]{%
+    % Init vars:
+    \setcounter{acolumn}{0}%
+    \setlength{\acolumnmaxheight}{0pt}%
+    \def\autoheight{\vspace*{0pt}}%
+    % Set `column` environment to special measuring environment
+    \let\column\@acolumn
+    \let\endcolumn\end@acolumn
+    \BODY% measure heights
+    % Reset counter for second processing round
+    \setcounter{acolumn}{0}%
+    % Set `column` environment to wrapper
+    \let\column\@@acolumn
+    \let\endcolumn\end@@acolumn
+    % Finally process columns now for real
+    \begin{columns}[#1]%
+        \BODY
+    \end{columns}%
+}
+\makeatother
+
+%\newlength{\myheight}
+
+  \begin{document}
+  \begin{frame} 
+    \vfill
+    
+        \begin{acolumns}[t]
+          \begin{column}{.32\linewidth}
+          
+            \begin{block}{Abstract}
+    			We consider the effect of economy on the amount of time citizens reported watching television on the ATUS  between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, and stock indices, as reported by federal agencies, with PCA being used to derive an aggregate measure. Using penalized regression methods, we determine the strongest sociodemographic factors (e.g. race, sex, education level, income) influencing television viewing. A hierarchical model is used to allow the association with covariates to vary smoothly with time. To account for the large number of respondents reporting no hours of television viewing, a separate logistic model is proposed.
+              \autoheight 
+            \end{block}
+            
+          
+          \end{column}
+          
+          \begin{column}{.32\linewidth}
+            \begin{block}{Introduction}
+              \begin{itemize}
+              	\item 
+              	\item 
+              	\item 
+              \end{itemize}
+              \autoheight 
+            \end{block}
+    
+          \end{column}
+          
+          \begin{column}{.32\linewidth}
+           \begin{block}{Main questions}
+            
+            \begin{itemize}
+            	\item What effect does the economy have on the amount of time spent watching TV and playing video games? Does this vary by gender? Does this vary according to your labour force participation? Does this vary across income?
+
+            	\item What are the strongest sociodemographic predictors of time spent watching TV?
+            \end{itemize}
+            \autoheight
+           \end{block}
+              
+          \end{column}
+          
+        \end{acolumns}
+    
+    
+    \vfill 
+    
+    \begin{acolumns}[t]
+    
+    \begin{column}{.48\linewidth}
+     \begin{block}{Method}
+                
+        
+     \end{block}
+     
+     
+     \begin{block}{Results}
+                     
+          
+     \end{block}
+     
+      \autoheight               
+    \end{column}
+              
+    
+    \begin{column}{.48\linewidth}
+     \begin{block}{Method}
+                     
+                     
+     \end{block}
+          
+          
+     \begin{block}{Results}
+                          
+                          
+     \end{block}
+     
+       \autoheight  
+    \end{column}
+    
+    
+    \end{acolumns}
+    
+    \vfill
+    
+        \begin{acolumns}[t]
+        
+        \begin{column}{.48\linewidth}
+
+         
+         \begin{block}{Strengths}
+         
+          \autoheight   
+         \end{block}
+                      
+        \end{column}
+                  
+        
+        \begin{column}{.48\linewidth}
+         
+         \begin{block}{Limitations}
+         
+          \autoheight   
+         \end{block}
+                      
+        \end{column}
+        
+        
+        \end{acolumns}
+    
+    \vfill 
+  \end{frame}
+\end{document}
