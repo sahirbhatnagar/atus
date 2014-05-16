@@ -66,7 +66,9 @@ dput(datalist.gam, file.path(outpath, "datagam.txt"))
 #                       'beta_econ_1'=1, 'beta_econ_2'=1)
 # dput(initslist.gam, file.path(outpath, "initsgam.txt"))
 
-#Models
+# Models
+
+# Gamma model with non smooth time trend ----------------------------------
 
 model <- jags.model(file.path(inpath, 'gamma_model.txt'), data=datalist.gam, 
                     n.chains=2, n.adapt=10000, quiet=FALSE)
@@ -77,6 +79,9 @@ model <- jags.model(file.path(inpath, 'gamma_model.txt'), data=datalist.gam,
 
 ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
 
+
+
+load("gamma_model_1.RData")
 summary(ss_econ)
 dat <- as.matrix(ss_econ)
 #econ1
@@ -137,3 +142,75 @@ abline(h=0,col="red", pch=10)
 save.image(file="gamma_model_1.RData")
 
 
+
+# Gamma model with smooth time trend ----------------------------------
+
+model <- jags.model(file.path(inpath, 'gamma_model_2.txt'), data=datalist.gam, 
+                    n.chains=2, n.adapt=10000, quiet=FALSE)
+
+# ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
+#                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
+#summary(ss)
+
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
+
+
+load("gamma_model_2.RData")
+summary(ss_econ)
+dat <- as.matrix(ss_econ)
+#econ1
+boxplot(dat[,1:40],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ1")),
+        xaxt="n")
+axis(1,at=1:40, 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=10)
+
+
+#econ2
+boxplot(dat[,41:80],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ2")),
+        xaxt="n")
+axis(1,at=1:40, 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=10)
+
+
+
+#time trend
+boxplot(dat[,81:200],use.cols=TRUE, 
+        main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
+axis(1,at=seq(1,120,by=3), 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=10)
+
+
+save.image(file="gamma_model_2.RData")
