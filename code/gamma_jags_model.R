@@ -145,15 +145,15 @@ save.image(file="gamma_model_1.RData")
 
 # Gamma model with smooth time trend ----------------------------------
 
-model <- jags.model(file.path(inpath, 'gamma_model_2.txt'), data=datalist.gam, 
+model_smooth <- jags.model(file.path(inpath, 'gamma_model_2.txt'), data=datalist.gam, 
                     n.chains=2, n.adapt=10000, quiet=FALSE)
 
 # ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
 #                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
 #summary(ss)
 
-ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
-
+ss_econ_smooth = coda.samples(model_smooth, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
+save.image(file="~/Dropbox/PhD/gamma_model_2.RData")
 
 load("gamma_model_2.RData")
 summary(ss_econ)
