@@ -1,23 +1,25 @@
 ##################################
-# JAGS model to be used in jags_model.R
-# Created by kevisco, May 1st, 2014
-# Updated May 1st, 2014
+# JAGS model to be used in jags_model.R for logistic regression (with autoregressive structure)
+# Created by kevisco, May 7th, 2014
+# Updated May 8th, 2014
 # hosted on Github repo 'sahirbhatnagar/atus'
 # NOTE:
 ##################################
 
 model {
     for (i in 1:N) {
-        RESPONSE[i] ~ dpois(mu[i])
-        mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
-	      	 			      + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i])
+        RESPONSE[i] ~ dbern(p[i])
+        p[i] <- ilogit(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
+	      	 			    + gamma[QUARTER[i]])
+
 
     }
 
 
-    beta_econ_1 ~ dnorm(0.0,0.001)
-    beta_econ_2 ~ dnorm(0.0,0.001)
-    
+
+    phi ~ dgamma(0.001,0.001)
+
+
     for (i in 1:4) {
     	alpha_race[i] ~ dnorm(0.0,0.001)    
     }
@@ -36,4 +38,5 @@ model {
     	alpha_diary[i] ~ dnorm(0.0,0.001)	
     }
     alpha_diary[7] <- 0.0
+
 }

@@ -8,8 +8,8 @@
 
 model {
     for (i in 1:N) {
-        RESPONSE[i] ~ dpois(mu[i])
-        mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
+        RESPONSE[i] ~ dbern(p[i])
+        p[i] <- ilogit(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
 	      	 			      + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i])
 
     }

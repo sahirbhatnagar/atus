@@ -1,0 +1,72 @@
+##################################
+# JAGS model to be used in jags_model.R for logistic regression (with autoregressive structure)
+# Created by kevisco, May 7th, 2014
+# Updated May 8th, 2014
+# hosted on Github repo 'sahirbhatnagar/atus'
+# NOTE:
+##################################
+
+model {
+    for (i in 1:N) {
+        RESPONSE[i] ~ dbern(p[i])
+        p[i] <- ilogit(alpha + alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] 
+	      	 			    + beta_econ1[QUARTER[i]] * ECON1[i] + beta_econ2[QUARTER[i]] * ECON2[i] + gamma[YEAR[i],MONTH[i]])
+
+
+    }
+
+
+    beta_econ1_mean[1] <- 0.0
+    beta_econ1_prec[1] <- phi * 0.001
+    beta_econ1_mean[2] <- 0.0
+    beta_econ1_prec[2] <- phi * 0.001
+    beta_econ2_mean[1] <- 0.0
+    beta_econ2_prec[1] <- phi * 0.001
+    beta_econ2_mean[2] <- 0.0
+    beta_econ2_prec[2] <- phi *	0.001    
+
+    for (i in 3:40) {
+    	beta_econ1_mean[i] <- 2 * beta_econ1_mean[i-1] - beta_econ1_mean[i-2]
+	beta_econ1_prec[i] <- phi
+    
+	beta_econ2_mean[i] <- 2 * beta_econ2_mean[i-1] - beta_econ2_mean[i-2]
+        beta_econ2_prec[i] <- phi
+
+    }
+
+    for (i in 1:10) {
+    	for (j in 1:12) {
+    	    gamma[i,j] ~ dnorm(0.0, 0.001)
+	}    
+    }
+    
+    
+    for (i in 1:40) {
+    	beta_econ1[i] ~ dnorm(beta_econ1_mean[i],beta_econ1_prec[i])
+    	beta_econ2[i] ~ dnorm(beta_econ2_mean[i],beta_econ2_prec[i])
+    }
+
+    phi ~ dgamma(0.001,0.001)
+
+    alpha ~ dnorm(0.0,0.001)
+
+    for (i in 1:4) {
+    	alpha_race[i] ~ dnorm(0.0,0.001)    
+    }
+    alpha_race[5] <- 0.0
+
+    alpha_sex ~ dnorm(0.0,0.001)
+
+    alpha_hispanic ~ dnorm(0.0,0.001)
+
+    for (i in 1:3) {
+    	alpha_region[i] ~ dnorm(0.0,0.001)
+    }
+    alpha_region[4] <- 0.0
+
+    for (i in 1:6) {
+    	alpha_diary[i] ~ dnorm(0.0,0.001)	
+    }
+    alpha_diary[7] <- 0.0
+
+}
