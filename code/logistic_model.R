@@ -2,7 +2,7 @@
 # R source code file used to model the ATUS respondents binary tv time use
 #(watch, didn't watch)
 # Created by Maxime, March 14, 2014
-# Updated April 30, 2014
+# Updated May 15, 2014
 # hosted on Github repo 'sahirbhatnagar/atus'
 # NOTE: 
 ##################################
@@ -98,7 +98,7 @@ DT$EDUC4 <- as.numeric(DT$EDUC==4)
 
 DT <- subset(DT, select=!(colnames(DT) %in% c("TUYEAR", "TUMONTH", "TUDIARYDAY", 
       "GEREG", "PEMARITL", "TELFS", "PEEDUCA", "PRCITSHP", "PTDTRACE", "TEMJOT", 
-      "TRDPFTPT", "EDUC")))
+      "TRDPFTPT", "EDUC", "QUARTER")))
 
 #response is TVIND
 Y <- as.vector(DT$TVIND)
@@ -124,43 +124,51 @@ fit <- grplasso(X, Y, index, model = LogReg(), lambda=lambda,
                 center = TRUE, standardize = TRUE)
 
 #we can compute the BIC
-BIC <- rep(0,length(lambda))
-log.lik <- LogReg()@nloglik
-matrix <- predict(fit, type='link')
+#BIC <- rep(0,length(lambda))
+#log.lik <- LogReg()@nloglik
+#matrix <- predict(fit, type='link')
 
 
-for(i in 1:length(lambda)){
-  BIC[i] <- 2*log.lik(Y, matrix[,i], rep(1,length(Y))) + log(nrow(X))*sum(fit$coef[,i]!=0)
-}
+#for(i in 1:length(lambda)){
+#  BIC[i] <- 2*log.lik(Y, matrix[,i], rep(1,length(Y))) + log(nrow(X))*sum(fit$coef[,i]!=0)
+#}
 
-BIC
+#BIC
 
 #10-fold cross validation
 library(caret)
 library(pROC)
 
-split <- createFolds(Y, k=10)
+AUC.mean.mat <- matrix(NA, nrow=50, ncol=length(lambda))
 
-AUC.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+for(l in 1:50){
 
-for(i in 1:10){
+  split <- createFolds(Y, k=10)
+
+  AUC.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+
+  for(i in 1:10){
   
-  Y.val <- Y[split[[i]]]; X.val <- X[split[[i]],]
-  Y.train <- Y[-split[[i]]]; X.train <- X[-split[[i]],]
+    Y.val <- Y[split[[i]]]; X.val <- X[split[[i]],]
+    Y.train <- Y[-split[[i]]]; X.train <- X[-split[[i]],]
   
-  fit.cv <- grplasso(X.train, Y.train, index, model = LogReg(), lambda=lambda, 
+    fit.cv <- grplasso(X.train, Y.train, index, model = LogReg(), lambda=lambda, 
                      center = TRUE, standardize = TRUE)
   
-  pred <- predict(fit.cv, newdata=X.val, type='response')
+    pred <- predict(fit.cv, newdata=X.val, type='response')
   
-  for(j in 1:ncol(pred)){
-    AUC.mat[i,j] <- auc(Y.val, pred[,j])
+    for(j in 1:ncol(pred)){
+      AUC.mat[i,j] <- auc(Y.val, pred[,j])
+    }
+  
+  
   }
-  
-  
+
+  AUC.mean.mat[l,] <- apply(AUC.mat, 2, mean)
+
 }
 
-AUC.mean <- apply(AUC.mat, 2, mean)
+AUC.mean <- apply(AUC.mean.mat, 2, mean)
 
 lambda.max <- lambda[which.max(AUC.mean)]
 
@@ -178,6 +186,6 @@ coeff <- fit$coeff[,colnames(fit$coeff)==lambda.opt]
 model <- coeff!=0
 
 #the selected predictors
-names(model[model])[-1]
+write(names(model[model])[-1], file="selected_log.txt")
 
 sink()

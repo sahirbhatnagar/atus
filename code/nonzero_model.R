@@ -1,7 +1,7 @@
 ##################################
 # R source code file used to model the ATUS respondents with non-zero tv time use
 # Created by Sahir, March 14, 2014
-# Updated May 05, 2014
+# Updated May 15, 2014
 # hosted on Github repo 'sahirbhatnagar/atus'
 # NOTE: 
 ##################################
@@ -103,7 +103,7 @@ DT$EDUC4 <- as.numeric(DT$EDUC==4)
 
 DT <- subset(DT, select=!(colnames(DT) %in% c("TUYEAR", "TUMONTH", "TUDIARYDAY", 
                                               "GEREG", "PEMARITL", "TELFS", "PEEDUCA", "PRCITSHP", "PTDTRACE", "TEMJOT", 
-                                              "TRDPFTPT", "EDUC")))
+                                              "TRDPFTPT", "EDUC", "QUARTER")))
 
 #response is TVTIME
 Y <- as.vector(DT$TVTIME)
@@ -136,28 +136,36 @@ fit.norm <- grplasso(X, Y.norm, index, model = LinReg(), lambda=lambda,
 library(caret)
 library(pROC)
 
-split <- createFolds(Y.norm, k=10)
+pred.mean.mat <- matrix(NA, nrow=50, ncol=length(lambda))
 
-pred.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+for(l in 1:50){
 
-for(i in 1:10){
+  split <- createFolds(Y.norm, k=10)
+
+  pred.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+
+  for(i in 1:10){
   
-  Y.val <- Y.norm[split[[i]]]; X.val <- X[split[[i]],]
-  Y.train <- Y.norm[-split[[i]]]; X.train <- X[-split[[i]],]
+    Y.val <- Y.norm[split[[i]]]; X.val <- X[split[[i]],]
+    Y.train <- Y.norm[-split[[i]]]; X.train <- X[-split[[i]],]
   
-  fit.cv <- grplasso(X.train, Y.train, index, model = LinReg(), lambda=lambda, 
+    fit.cv <- grplasso(X.train, Y.train, index, model = LinReg(), lambda=lambda, 
                      center = TRUE, standardize = TRUE)
   
-  pred <- predict(fit.cv, newdata=X.val, type='response')
+    pred <- predict(fit.cv, newdata=X.val, type='response')
   
-  for(j in 1:ncol(pred)){
-    pred.mat[i,j] <- sum((Y.val-pred[,j])^2)
+    for(j in 1:ncol(pred)){
+      pred.mat[i,j] <- sum((Y.val-pred[,j])^2)
+    }
+  
+  
   }
-  
+
+  pred.mean.mat[l,] <- apply(pred.mat, 2, mean)
   
 }
 
-pred.mean.norm <- apply(pred.mat, 2, mean)
+pred.mean.norm <- apply(pred.mean.mat, 2, mean)
 
 lambda.min <- lambda[which.min(pred.mean.norm)]
 
@@ -175,7 +183,7 @@ coeff.norm <- fit.norm$coeff[,colnames(fit.norm$coeff)==lambda.opt.norm]
 model.norm <- coeff.norm!=0
 
 #the selected predictors
-names(model.norm[model.norm])[-1]
+write(names(model.norm[model.norm])[-1], file="selected_norm.txt")
 
 #We can also try a gamma model---------------------------------------------------
 
@@ -206,28 +214,36 @@ fit.gam <- grplasso(X, Y, index, model = GamReg(), lambda=lambda,
 
 #10-fold cross validation
 
-split <- createFolds(Y, k=10)
+pred.mean.mat <- matrix(NA, nrow=50, ncol=length(lambda))
 
-pred.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+for(l in 1:50){
 
-for(i in 1:10){
+  split <- createFolds(Y, k=10)
+
+  pred.mat <- matrix(NA, nrow=10, ncol=length(lambda))
+
+  for(i in 1:10){
   
-  Y.val <- Y[split[[i]]]; X.val <- X[split[[i]],]
-  Y.train <- Y[-split[[i]]]; X.train <- X[-split[[i]],]
+    Y.val <- Y[split[[i]]]; X.val <- X[split[[i]],]
+    Y.train <- Y[-split[[i]]]; X.train <- X[-split[[i]],]
   
-  fit.cv <- grplasso(X.train, Y.train, index, model = GamReg(), lambda=lambda, 
+    fit.cv <- grplasso(X.train, Y.train, index, model = GamReg(), lambda=lambda, 
                      center = TRUE, standardize = TRUE)
   
-  pred <- predict(fit.cv, newdata=X.val, type='response')
+    pred <- predict(fit.cv, newdata=X.val, type='response')
   
-  for(j in 1:ncol(pred)){
-    pred.mat[i,j] <- sum((Y.val-pred[,j])^2)
+    for(j in 1:ncol(pred)){
+      pred.mat[i,j] <- sum((Y.val-pred[,j])^2)
+    }
+  
+  
   }
-  
+
+  pred.mean.mat[l,] <- apply(pred.mat, 2, mean)
   
 }
 
-pred.mean.gam <- apply(pred.mat, 2, mean)
+pred.mean.gam <- apply(pred.mean.mat, 2, mean)
 
 lambda.min <- lambda[which.min(pred.mean.gam)]
 
@@ -245,6 +261,6 @@ coeff.gam <- fit.gam$coeff[,colnames(fit.gam$coeff)==lambda.opt.gam]
 model.gam <- coeff.gam!=0
 
 #the selected predictors
-names(model.gam[model.gam])[-1]
+write(names(model.gam[model.gam])[-1], file="selected_gam.txt")
 
 sink()
