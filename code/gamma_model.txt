@@ -25,15 +25,11 @@ model{
     # actually be the rate lambda. 
     # rate = mu / var(y)
 
-    shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
     rate[i] <- mu[i] / pow(sd, 2)
-    
-    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + beta_econ_1[QUARTER[i]] * ECON1[i] + beta_econ_2[QUARTER[i]] * ECON2[i] + gamma[MONTH[i],YEAR[i]] )
-    
-  }
-  
-  # PRIORS
+    shape[i] <- pow(mu[i], 2) / pow(sd, 2)    
 
+    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] +  gamma[MONTH[i],YEAR[i]] + beta_econ1 * ECON1[i] + beta_econ2 * ECON2[i])
+}
 
     alpha_sex ~ dnorm(0.0,0.001)
 
@@ -52,44 +48,36 @@ model{
       alpha_race[i] ~ dnorm(0.0,0.001)    
     }
     
-    
-    beta_econ_1mean[1] <- 0.0
-    beta_econ_1prec[1] <- phi * 0.001
-    beta_econ_1mean[2] <- 0.0
-    beta_econ_1prec[2] <- phi * 0.001
-    for (i in 3:40) {
-        beta_econ_1mean[i] <- 2 * beta_econ_1[i-1] - beta_econ_1[i-2]
-        beta_econ_1prec[i] <- phi
-    }
-    
-    for (i in 1:40) {
-    beta_econ_1[i] ~ dnorm(beta_econ_1mean[i],beta_econ_1prec[i])
-    }
-    
-    beta_econ_2mean[1] <- 0.0
-    beta_econ_2prec[1] <- phi * 0.001
-    beta_econ_2mean[2] <- 0.0
-    beta_econ_2prec[2] <- phi * 0.001
-    for (i in 3:40) {
-        beta_econ_2mean[i] <- 2 * beta_econ_2[i-1] - beta_econ_2[i-2]
-        beta_econ_2prec[i] <- phi
-    }
-    
-    for (i in 1:40) {
-    beta_econ_2[i] ~ dnorm(beta_econ_2mean[i],beta_econ_2prec[i])
-    }
+    beta_econ1 ~ dnorm(0.0,0.001)
+    beta_econ2 ~ dnorm(0.0,0.001)
     
     phi ~ dgamma(0.001,0.001)
-
     
-    for (i in 1:12) {
-        for (j in 1:10) {
-            gamma[i,j] ~ dnorm(0.0,0.001)
-        }
-    }
-    #alpha[9,1] <- 0.0
-    #alpha[9,2] ~ dnorm(0.0,0.001)
+      # first do the time trend for 1st year
+      gammamean[1,1] <- 0.0
+      gammaprec[1,1] <- phi * 0.001
+      gammamean[2,1] <- 0.0
+      gammaprec[2,1] <- phi * 0.001
+    
+          for (i in 3:12) {
+              gammamean[i,1] <- 2 * gamma[i-1,1] - gamma[i-2,1]
+              gammaprec[i,1] <- phi
+          }
 
+    # now for years 2 to 10
+    for (j in 2:10){
+    
+      gammamean[1,j] <- 2 * gamma[12,j-1] - gamma[11,j-1]
+      gammaprec[1,j] <- phi 
+      gammamean[2,j] <- 2 * gamma[1,j] - gamma[12,j-1]
+      gammaprec[2,j] <- phi
+    
+          for (i in 3:12) {
+              gammamean[i,j] <- 2 * gamma[i-1,j] - gamma[i-2,j]
+              gammaprec[i,j] <- phi
+          }
+    }
+    
     
     sd ~ dgamma(0.001, 0.001)
     #sd ~ dunif(0.001, 100)
