@@ -12,10 +12,12 @@ sink("~/git_repositories/atus.git/code/nonzero_model.log")
 
 # import the data
 source("~/git_repositories/atus.git/code/data_cleaning.R")
+#load("data.Rda")
 
 #gamma regression with "grplasso"
 library(grplasso)
-library(biglm)
+#library(biglm)
+library(data.table)
 
 #number of people who watched vs not watched
 DT[,.N, by=TVIND]
@@ -134,7 +136,6 @@ fit.norm <- grplasso(X, Y.norm, index, model = LinReg(), lambda=lambda,
 
 #10-fold cross validation
 library(caret)
-library(pROC)
 
 pred.mean.mat <- matrix(NA, nrow=50, ncol=length(lambda))
 
@@ -216,7 +217,13 @@ fit.gam <- grplasso(X, Y, index, model = GamReg(), lambda=lambda,
 
 pred.mean.mat <- matrix(NA, nrow=50, ncol=length(lambda))
 
-for(l in 1:50){
+library(doParallel)
+library(foreach)
+library(plyr)
+cl<-makeCluster(2)
+registerDoParallel(cl) # register these 2 cores with the "foreach" package
+
+pred.mean.mat <- foreach(l=1:20, combine='rbind', .packages=c('caret', 'grplasso')) %dopar% {
 
   split <- createFolds(Y, k=10)
 
@@ -239,17 +246,17 @@ for(l in 1:50){
   
   }
 
-  pred.mean.mat[l,] <- apply(pred.mat, 2, mean)
+  apply(pred.mat, 2, mean)
   
 }
 
-pred.mean.gam <- apply(pred.mean.mat, 2, mean)
+pred.mean.gam <- apply(pred.mean.mat[[1]], 2, mean)
 
 lambda.min <- lambda[which.min(pred.mean.gam)]
 
 #apply the 1-sd rule
 sd <- sd(pred.mean.gam)
-pred.within.1sd <- pred.mean.gam[pred.mean.gam<max(pred.mean.gam)+sd]
+pred.within.1sd <- pred.mean.gam[pred.mean.gam<min(pred.mean.gam)+sd]
 lambda.within.1sd <- lambda[pred.mean.gam %in% pred.within.1sd]
 
 lambda.opt.gam <- names(which.min(apply(fit.gam$coeff[,colnames(fit.gam$coeff) %in% lambda.within.1sd], 
