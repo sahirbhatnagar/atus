@@ -82,7 +82,7 @@
 
 %\newlength{\myheight}
 
-  \begin{document}
+\begin{document}
   \begin{frame} 
     \vfill
     
@@ -100,9 +100,9 @@
           \begin{column}{.32\linewidth}
             \begin{block}{Introduction}
               \begin{itemize}
-              	\item 
-              	\item 
-              	\item 
+              	\item Since 2003, the ATUS has been collecting information on how Americans spend a day, what kind of activities they perform, and for how long.
+              	\item Over a decade, some 135,000 respondents were asked to walk an interviewer through a selected day.
+              	\item The dataset itself contains socio-demographic information about the respondents (e.g. sex, race, income), as well as time-use variables (e.g. sleeping, working, watching TV)
               \end{itemize}
               \autoheight 
             \end{block}
@@ -113,9 +113,9 @@
            \begin{block}{Main questions}
             
             \begin{itemize}
-            	\item What effect does the economy have on the amount of time spent watching TV and playing video games? Does this vary by gender? Does this vary according to your labour force participation? Does this vary across income?
+            	\item What effect does the economy have on the amount of time spent watching TV? Does this vary by gender? Does this vary according to your labour force participation? Does this vary across income?
 
-            	\item What are the strongest sociodemographic predictors of time spent watching TV?
+            	\item What are the strongest socio-demographic predictors of time spent watching TV?
             \end{itemize}
             \autoheight
            \end{block}
@@ -128,8 +128,72 @@
     \vfill 
     
     \begin{acolumns}[t]
+              \begin{column}{.24\linewidth}
+              
+                \begin{block}{Main challenges}
+        		  \begin{itemize}
+        		  	\item About 20\% of respondents reported no TV watching; two separate models are used to address this issue
+        		  	
+        		  	\item How can economy be measured. \textbf{Note}: economy cannot have a direct, causal effect on TV watching
+        		  	
+        		  	\item How can we separate the effect of time from the effect of economy
+        		  \end{itemize}
+        			
+                  \autoheight 
+                \end{block}
+                
+              
+              \end{column}
+              
+              \begin{column}{.24\linewidth}
+                \begin{block}{Economy}
+                  \begin{center}
+                  \includegraphics{econ_measures.pdf}
+                  \end{center}
+                  
+                  \autoheight 
+                \end{block}
+        
+              \end{column}
+              
+              \begin{column}{.24\linewidth}
+               \begin{block}{Stratification}
+                \begin{center}
+                \includegraphics{stratification}
+                \end{center}
+               
+                \autoheight
+               \end{block}
+               
+              \end{column}
+               
+              \begin{column}{.24\linewidth}
+               \begin{block}{Selected socio-demographic variables}
+                \begin{itemize}
+                	\item Sex, age, region, race, marital status, education level, presence of household children
+                	
+                	\item Weekly earnings, labour force status, number of jobs, average number of hours worked in a week
+                	
+                	\item Month and year the interview was conducted, the day of the week, whether it was a holiday
+                	
+                \end{itemize}
+                             
+                \autoheight
+               \end{block}
+                  
+              \end{column}
+              
+            \end{acolumns}
+        
+        
+        \vfill
+    
+    \begin{acolumns}[t]
     
     \begin{column}{.48\linewidth}
+    \begin{center}
+   		\LARGE{1. Effect of economy}
+    \end{center}
      \begin{block}{Method}
                 
         
@@ -138,26 +202,39 @@
      
      \begin{block}{Results}
                      
-          
+      \autoheight 
      \end{block}
      
-      \autoheight               
+                     
     \end{column}
               
     
     \begin{column}{.48\linewidth}
+    \begin{center}
+    	\LARGE{2. Main socio-demographic predictors}
+    \end{center}
      \begin{block}{Method}
-                     
+     	\begin{itemize}
+     		\item We use a penalized generalized linear model to select the most relevant socio-demographic factors. The penalty being used is the group-Lasso penalty (Yuan \& Lin, 2007):
+     		$$\lambda \sum_{\ell=1}^{L}\sqrt{p_\ell}\|\beta_\ell\|_2.$$
+     		This penalty is used to account for the fact that some predictors are categorical.
+     		\item The tuning parameter is selected using 10-fold cross-validation and the one-standard error rule (Hastie \emph{et al.}, \emph{Elements of Statistical Learning})
+     	\end{itemize}
+        
                      
      \end{block}
           
           
      \begin{block}{Results}
-                          
-                          
+        \begin{itemize}
+        	\item For the logistic model, the selected factors are: presence of household children, age, sex, average number of hours worked in a week, and the number of jobs.
+        	
+        	\item For the gamma model, the selected factors are: presence of household children, age, sex, weekly earnings, presence of spouse in household, average number of hours worked in a week, diary day, education level, race, and the number of jobs.
+        \end{itemize}
+       \autoheight                   
      \end{block}
      
-       \autoheight  
+        
     \end{column}
     
     
@@ -167,25 +244,45 @@
     
         \begin{acolumns}[t]
         
-        \begin{column}{.48\linewidth}
-
+        \begin{column}{.32\linewidth}
+		
          
          \begin{block}{Strengths}
-         
+         	\begin{itemize}
+         		\item The model is effectively separating the economic trend from the time trend
+         		\item The definition of economy being used is quite rich
+         		
+         	\end{itemize}
           \autoheight   
          \end{block}
                       
         \end{column}
                   
         
-        \begin{column}{.48\linewidth}
+        \begin{column}{.32\linewidth}
          
          \begin{block}{Limitations}
-         
+         	\begin{itemize}
+         		\item The model should be complemented by model-validation results
+         		\item The model does not include the natural auto-correlation of the economic variables
+         	\end{itemize}
           \autoheight   
          \end{block}
                       
         \end{column}
+        
+        
+         \begin{column}{.32\linewidth}
+                 
+          \begin{block}{Acknowledgements}
+             \begin{center}
+             We would like to thank Dr. Celia Greenwood, Dr. Olli Saarela, Dr. Abbas Khalili, and Dr. James Hanley for their help and input on this project.
+             \end{center}
+             
+           \autoheight   
+          \end{block}
+                              
+         \end{column}
         
         
         \end{acolumns}
