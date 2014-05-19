@@ -72,7 +72,39 @@ names(ECON) = c("pc1", "pc2", "quarter")
 #write(t(as.matrix(ECON)), file="~/atus/data/econ_data.txt", ncolumns=length(names(ECON)), append=TRUE)
 
 
+#FINAL PLOT TO PUT ON POSTER ----
 
+pdf("~/atus/poster/econ_measures.pdf")
+
+plot(-50, -50, xlim=c(0,length(gdp_scale)), ylim=c(min(-pca_econ$scores[,1]),
+     max(-pca_econ$scores[,1])),xaxt="n", xlab="Quarter",
+     ylab="Centered and scaled measure", main="Economic measures by quarter 2003-2012")
+lines(1:length(gdp_scale), gdp_scale, col='red', lwd=2.5)
+lines(1:length(dow_scale), dow_scale, col='blue',lwd=2.5)
+lines(1:length(sp500_scale), sp500_scale, col='green',lwd=2.5)
+lines(1:length(employment_scale), employment_scale, col='brown',lwd=2.5)
+
+lines(1:length(gdp_scale), -pca_econ$scores[,1], col=6, lty=2)
+lines(1:length(gdp_scale), -pca_econ$scores[,2], col=9, lty=2)
+
+axis(1,at=seq(1,40),
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+
+legend(30,-1.8,legend=c("GDP","DOW JONES","S&P 500","EMPLOYMENT RATE","PRINCIPAL COMP 1",
+                        "PRINCIPAL COMP 2"), bty="n", cex=0.6, col=c('red','blue','green','brown',
+                        'purple', 'black'), lty=c(1,1,1,1,2,2))
+
+dev.off()
 
 #Trying PCA without SP500 vector
 #econ_reduce = cbind(gdp_quart, dow_quart, unemployment_quart)
