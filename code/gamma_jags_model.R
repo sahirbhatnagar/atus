@@ -302,7 +302,10 @@ abline(h=0,col="red", pch=10)
 # Econ Race interaction --------------------------------------------------------
 
 model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
-                    n.chains=2, n.adapt=5000, quiet=FALSE)
+                    n.chains=2, n.adapt=7500, quiet=FALSE)
 
 ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta_econ_1_race",
-                                "beta_econ_2_race","P.res","fit","mu"), 5000, thin=10)
+                                "beta_econ_2_race","P.res","fit","mu"), 7500, thin=10)
+save.image(file="~/Dropbox/PhD/SSC case study/gamma3_race_interaction.RData")
+
+xtabs(~DTS$PTDTRACE)

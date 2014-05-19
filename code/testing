@@ -48,8 +48,11 @@ model{
     
     beta_econ_1 ~ dnorm(0.0,0.001)
     beta_econ_2 ~ dnorm(0.0,0.001)
-    beta_econ_1_race ~ dnorm(0.0,0.001)
-    beta_econ_2_race ~ dnorm(0.0,0.001)    
+
+    for (i in 1:5){
+    beta_econ_1_race[i] ~ dnorm(0.0,0.001)
+    beta_econ_2_race[i] ~ dnorm(0.0,0.001)    
+    }
 
       #first do the time trend for 1st year
       gammamean[1,1] <- 0.0
