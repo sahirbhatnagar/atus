@@ -308,4 +308,6 @@ ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta
                                 "beta_econ_2_race","P.res","fit","mu"), 7500, thin=10)
 save.image(file="~/Dropbox/PhD/SSC case study/gamma3_race_interaction.RData")
 
+summary(ss_econ)
+
 xtabs(~DTS$PTDTRACE)
