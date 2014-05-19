@@ -261,14 +261,14 @@ save.image(file="gamma_model_2.RData")
 
 #remember to do DIC, age interaction, difference of betas
 
-# Age Economy interaction -------------------------------------------------
+# Sex Economy interaction -------------------------------------------------
 
 
 model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
-                    n.chains=2, n.adapt=10000, quiet=FALSE)
+                    n.chains=2, n.adapt=5000, quiet=FALSE)
 
 ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma", "logRR_time","beta_econ_1_sex",
-                                "beta_econ_2_sex","RESPONSE"), 10000, thin=10)
+                                "beta_econ_2_sex","RESPONSE"), 5000, thin=10)
 save.image(file="~/Dropbox/PhD/SSC case study/gamma2_interaction.RData")
 
 
@@ -296,3 +296,13 @@ axis(1,at=seq(1,120,by=3),
               "Jan12","Apr12","Jul12","Oct12")
      ,cex.axis=0.7, tck=-.01, las=3)
 abline(h=0,col="red", pch=10)
+
+
+
+# Econ Race interaction --------------------------------------------------------
+
+model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
+                    n.chains=2, n.adapt=5000, quiet=FALSE)
+
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta_econ_1_race",
+                                "beta_econ_2_race","P.res","fit","mu"), 5000, thin=10)
