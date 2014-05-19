@@ -11,7 +11,7 @@
 #On kevisco's laptop
 # setwd("~/atus/data")
 # On Sy's laptop
-#setwd("~//git_repositories/atus/data/")
+setwd("~//git_repositories/atus/data/")
 # On Sy's desktop
 setwd("~//git_repositories//atus.git//data/")
 load("data.Rda")
@@ -37,12 +37,13 @@ DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
 xtabs(~DTS$QUARTER)
 
 #We first create the datafiles for JAGS
-
+#sy's desktop
  outpath <- "~//git_repositories//atus.git//data"
  inpath <- "~//git_repositories//atus.git//code"
 
-#outpath <- "~//git_repositories//atus//data"
-#inpath <- "~//git_repositories//atus//code"
+#sy's laptop
+outpath <- "~//git_repositories//atus//data"
+inpath <- "~//git_repositories//atus//code"
 
 
 datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY, 
@@ -52,7 +53,6 @@ datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY,
                      'RACE'=DTS$PTDTRACE, 
                      'ECON1'=DTS$ECON1,
                      'ECON2'=DTS$ECON2,
-                     'QUARTER'=DTS$QUARTER,
                      'YEAR'=DTS$TUYEAR-2003+1,
                      'MONTH'=DTS$TUMONTH,
                      'RESPONSE'=DTS$TVTIME, 
@@ -68,62 +68,29 @@ dput(datalist.gam, file.path(outpath, "datagam.txt"))
 
 # Models
 
-# Gamma model with non smooth time trend ----------------------------------
+# Gamma model with smooth time trend and 1 beta for econ1 1 beta for econ 2 ----------------------------------
 
-model <- jags.model(file.path(inpath, 'gamma_model.txt'), data=datalist.gam, 
+model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
                     n.chains=2, n.adapt=10000, quiet=FALSE)
 
 # ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
 #                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
 #summary(ss)
 
-ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma", "logRR_time"), 10000, thin=10)
+ss_econ2 = coda.samples(model, c("shape", "rate"), 10000, thin=10)
 
-
+dat2 <- as.matrix(ss_econ2)
+dat2[1:5,10940:10945]
+dim(dat2)
 
 load("gamma_model_1.RData")
 summary(ss_econ)
 dat <- as.matrix(ss_econ)
-#econ1
-boxplot(dat[,1:40],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ1")),
-        xaxt="n")
-axis(1,at=1:40, 
-labels=c("Jan03","Apr03","Jul03","Oct03",
-         "Jan04","Apr04","Jul04","Oct04",
-         "Jan05","Apr05","Jul05","Oct05",
-         "Jan06","Apr06","Jul06","Oct06",
-         "Jan07","Apr07","Jul07","Oct07",
-         "Jan08","Apr08","Jul08","Oct08",
-         "Jan09","Apr09","Jul09","Oct09",
-         "Jan10","Apr10","Jul10","Oct10",
-         "Jan11","Apr11","Jul11","Oct11",
-         "Jan12","Apr12","Jul12","Oct12")
-,cex.axis=0.7, tck=-.01, las=3)
-abline(h=0,col="red", pch=10)
-
-
-#econ2
-boxplot(dat[,41:80],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ2")),
-        xaxt="n")
-axis(1,at=1:40, 
-     labels=c("Jan03","Apr03","Jul03","Oct03",
-              "Jan04","Apr04","Jul04","Oct04",
-              "Jan05","Apr05","Jul05","Oct05",
-              "Jan06","Apr06","Jul06","Oct06",
-              "Jan07","Apr07","Jul07","Oct07",
-              "Jan08","Apr08","Jul08","Oct08",
-              "Jan09","Apr09","Jul09","Oct09",
-              "Jan10","Apr10","Jul10","Oct10",
-              "Jan11","Apr11","Jul11","Oct11",
-              "Jan12","Apr12","Jul12","Oct12")
-     ,cex.axis=0.7, tck=-.01, las=3)
-abline(h=0,col="red", pch=10)
-
-
 
 #time trend
-boxplot(dat[,81:200],use.cols=TRUE, 
-main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
+boxplot(dat[,3:122],use.cols=TRUE, 
+        main=expression(paste(hat(gamma)[month_year])),xaxt="n")
 axis(1,at=seq(1,120,by=3), 
      labels=c("Jan03","Apr03","Jul03","Oct03",
               "Jan04","Apr04","Jul04","Oct04",
@@ -138,26 +105,99 @@ axis(1,at=seq(1,120,by=3),
      ,cex.axis=0.7, tck=-.01, las=3)
 abline(h=0,col="red", pch=10)
 
+#logRR time trend
+boxplot(dat[,123:242],use.cols=TRUE, 
+main=expression(paste(hat(gamma)[month_year]-hat(gamma)["jan03"])),xaxt="n")
+axis(1,at=seq(1,120,by=3), 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", lwd=3)
 
-save.image(file="gamma_model_1.RData")
+rm(dat2)
+plot(density(dat[,2]))
+pairs(dat[,1:2])
+
+load("~/Dropbox/PhD/SSC case study/gamma1_no_interaction.RData")
+
+save.image(file="~/Dropbox/PhD/SSC case study/gamma1_no_interaction.RData")
+getwd()
+
+mcmcChain = as.matrix( ss_econ2 )
+chainLength = NROW(mcmcChain)
+
+source("~/git_repositories/atus/code/plotPost.R")
+
+#windows(width=10,height=3)
+#layout( matrix(1:3,nrow=1) )
+dev.off()
+y <- DTS$TVTIME
+# Data with superimposed posterior predictive gamma's:
+hist( y , xlab="y"  , main="Data" , col="grey" , prob=T )
+xComb=seq(min(y),max(y),length=501)
+nPPC = 15
+for ( idx in round(seq(1,chainLength,length=nPPC)) ) {
+  if ( mType=="Mean" ) {
+    m = mcmcChain[idx,"m"]
+    sd = mcmcChain[idx,"sd"]
+    sh = m^2 / sd^2
+    ra = m   / sd^2
+  }
+  if ( mType=="Mode" ) {
+    m = mcmcChain[idx,"m"]
+    sd = mcmcChain[idx,"sd"]
+    ra = ( m + sqrt( m^2 + 4*sd^2 ) ) / ( 2 * sd^2 )
+    sh = 1 + m * ra
+  }
+  lines( xComb , dgamma( xComb , sh , ra ) , col="skyblue" , lwd=2 ) 
+}
+# Posterior estimates of parameters:
+par( mar=c(3,1,2.5,0) , mgp=c(2,0.7,0) )
+plotPost( mcmcChain[,"rate[100]"] , xlab="mType" , main="Posterior Est." , showMode=T )
+plotPost( mcmcChain[,"sd"] , xlab="sd" , main="Posterior Est." , showMode=T )
+savePlot(file=paste(fileNameRoot,mType,sep=""),type="jpg")
+
+xComb=seq(min(y),max(y),length=501)
+hist( y , xlab="y"  , main="Data" , col="grey" , prob=T )
+
+for (j in 1:10){
+lines( xComb , dgamma( xComb , shape=mcmcChain[1,10941+j] , rate=mcmcChain[1,j] ) , col="red" , lwd=2 ) 
+}
+lines( xComb , dgamma( xComb , shape=mcmcChain[1,"shape[2]"] , rate=mcmcChain[1,"rate[2]"] ) , col="red" , lwd=2 ) 
+
+mcmcChain[1:5,1:2]
+
+
+qgamma(y[1],shape=mcmcChain[1,"shape[1]"], rate=mcmcChain[1,"rate[1]"])
+
 
 
 
 # Gamma model with smooth time trend ----------------------------------
 
 model_smooth <- jags.model(file.path(inpath, 'gamma_model_2.txt'), data=datalist.gam, 
-                    n.chains=2, n.adapt=10000, quiet=FALSE)
+                    n.chains=2, n.adapt=100, quiet=FALSE)
 
 # ss = coda.samples(model, c("alpha_diary","alpha_region","alpha_hispanic","alpha_sex",
 #                            "alpha_race", "beta_econ_1", "beta_econ_2"), 10000, thin=10)
 #summary(ss)
 
 ss_econ_smooth = coda.samples(model_smooth, c("beta_econ_1", "beta_econ_2", "gamma"), 10000, thin=10)
+
+
 save.image(file="~/Dropbox/PhD/gamma_model_2.RData")
 
 load("~/Dropbox/PhD/gamma_model_2.RData")
-summary(ss_econ)
-dat <- as.matrix(ss_econ)
+summary(ss_econ_smooth)
+dat <- as.matrix(ss_econ_smooth)
 #econ1
 boxplot(dat[,1:40],use.cols=TRUE, main=expression(paste(hat(beta)[quarter], " for 40 quarters for econ1")),
         xaxt="n")
@@ -214,3 +254,45 @@ abline(h=0,col="red", pch=10)
 
 
 save.image(file="gamma_model_2.RData")
+
+
+
+
+
+#remember to do DIC, age interaction, difference of betas
+
+# Age Economy interaction -------------------------------------------------
+
+
+model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
+                    n.chains=2, n.adapt=10000, quiet=FALSE)
+
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "gamma", "logRR_time","beta_econ_1_sex",
+                                "beta_econ_2_sex","RESPONSE"), 10000, thin=10)
+save.image(file="~/Dropbox/PhD/SSC case study/gamma2_interaction.RData")
+
+
+summary(ss_econ[[2]][,-1:-10941])
+
+mcmcChain <- as.matrix(ss_econ)
+mcmcChain[1:5,10941:10946]
+DTS$TVTIME[1:5]
+summary(mcmcChain[,-1:-10941])
+
+
+#time trend
+boxplot(mcmcChain[,-1:-10945],use.cols=TRUE, 
+        main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
+axis(1,at=seq(1,120,by=3), 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=10)
