@@ -17,42 +17,51 @@ model{
     rate[i] <- mu[i] / pow(sd, 2)
     shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
     
-    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i] + gamma[MONTH[i],YEAR[i]] + beta_econ_1_race[RACE[i]] * ECON1[i] + beta_econ_2_race[RACE[i]] * ECON2[i] + 0.00001 )
+    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i]  + gamma[MONTH[i],YEAR[i]] + 0.00001 )
     
-    P.res[i] <- (RESPONSE[i]-mu[i])/sqrt(mu[i])   #pearson residuals
+    #Fit Assessments
+    P.res[i] <- (RESPONSE[i]-mu[i])/mu[i]   #pearson residuals
+    C.new[i] ~ dgamma(shape[i], rate[i])
+    P.res.new[i] <- (C.new[i]-mu[i])/mu[i]  #pearson residuals for simulated data
     D[i] <- pow(P.res[i],2)
-
+    D.new[i] <- pow(P.res.new[i],2)
+    resid[i] <- RESPONSE[i]-C.new[i]
   }
   
   # Add up discrepancy measures
   fit <- sum(D[])
-  
+  fit.new <- sum(D.new[])
+  chisq.p <- step(fit-fit.new)
+
   # PRIORS
 
     alpha_sex ~ dnorm(0.0,0.001)
 
     alpha_hispanic ~ dnorm(0.0,0.001)
 
-    for (i in 1:4) {
+    for (i in 1:3) {
       alpha_region[i] ~ dnorm(0.0,0.001)
     }
+    alpha_region[4] <- 0
     
-    for (i in 1:7) {
+    
+    for (i in 1:6) {
       alpha_diary[i] ~ dnorm(0.0,0.001)	
     }
-    
+    alpha_diary[7] <- 0.0
 
-    for (i in 1:5) {
+    for (i in 1:4) {
       alpha_race[i] ~ dnorm(0.0,0.001)    
     }
+    alpha_race[5] <- 0.0
     
     beta_econ_1 ~ dnorm(0.0,0.001)
     beta_econ_2 ~ dnorm(0.0,0.001)
-
-    for (i in 1:5){
-    beta_econ_1_race[i] ~ dnorm(0.0,0.001)
-    beta_econ_2_race[i] ~ dnorm(0.0,0.001)    
-    }
+    
+    #for (i in 1:5){
+    #beta_econ_1_race[i] ~ dnorm(0.0,0.001)
+    #beta_econ_2_race[i] ~ dnorm(0.0,0.001)    
+    #}
 
       #first do the time trend for 1st year
       gammamean[1,1] <- 0.0
