@@ -291,10 +291,11 @@ abline(h=0,col="red", pch=10)
 load("~/Dropbox/PhD/SSC case study/gamma3_race_interaction.RData")
 
 model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam, 
-                    n.chains=2, n.adapt=1000, quiet=FALSE)
+                    n.chains=2, n.adapt=2000, quiet=FALSE)
 
-ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta_econ_1_race",
-                                "beta_econ_2_race","P.res","fit","mu"), 1000, thin=10)
+ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta_econ_race_1",
+                                "beta_econ_race_2","P.res","P.res.new","C.res","resid","fit",
+                                "fit.new","chisqp"), 10000, thin=10)
 
 plot(ss_econ, ask=TRUE)
 
@@ -302,25 +303,7 @@ plot(ss_econ, ask=TRUE)
 
 save.image(file="~/Dropbox/PhD/SSC case study/gamma3_race_interaction.RData")
 
-summary(ss_econ)
 
-xtabs(~DTS$PTDTRACE)
-
-#econ 1
-mean(ss_econ[[1]][,10942])
-#econ 1 race interaction
-mean(ss_econ[[1]][,10943])
-
-ss_econ[[1]][,"mu[1]":"mu[10941]"]
-
-fitted <- mcmcChain[,11075:22015]
-mean.fitted <- apply(fitted,2,mean)
-
-plot(mean.fitted,DTS$TVTIME)
-dev.off()
-
-plot(model$mean$P.res, las=1, col="blue", pch=20)
-abline(h=0)
 
 
 
