@@ -32,7 +32,7 @@ xtabs(~DT$TUYEAR)
 DT <- DT[TVIND!=0]
 #Sample subset of survey data
 set.seed(1234)
-prop <- 0.01
+prop <- 0.10
 DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
 xtabs(~DTS$QUARTER)
 
