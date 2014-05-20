@@ -9,6 +9,7 @@
   \usepackage{type1cm}
   \usepackage{calc} 
   \usepackage{times}
+  \usepackage{wrapfig}
   \usepackage{amsmath,amsthm, amssymb, latexsym}
   \boldmath
   \usepackage[english]{babel}
@@ -137,6 +138,8 @@
         		  	\item How can economy be measured. \textbf{Note}: economy cannot have a direct, causal effect on TV watching
         		  	
         		  	\item How can we separate the effect of time from the effect of economy
+        		  	
+        		  	\item How to take into account the stratified sampling scheme
         		  \end{itemize}
         			
                   \autoheight 
@@ -147,10 +150,13 @@
               
               \begin{column}{.24\linewidth}
                 \begin{block}{Economy}
-                  \begin{center}
-                  \includegraphics{econ_measures.pdf}
-                  \end{center}
+                	
+                  \begin{wrapfigure}{l}{0.5\textwidth}
+                  \includegraphics[height=4.5in]{econ_measures.pdf}
+                  \end{wrapfigure}
+                  Several economic measures were collected via US federal agencies, and an aggregate measurement was constructed using Principal Component Analysis
                   
+                  \vspace{2in}
                   \autoheight 
                 \end{block}
         
@@ -190,7 +196,7 @@
     
     \begin{acolumns}[t]
     
-    \begin{column}{.48\linewidth}
+    \begin{column}{.64\linewidth}
     \begin{center}
    		\LARGE{1. Effect of economy}
     \end{center}
@@ -209,7 +215,7 @@
     \end{column}
               
     
-    \begin{column}{.48\linewidth}
+    \begin{column}{.32\linewidth}
     \begin{center}
     	\LARGE{2. Main socio-demographic predictors}
     \end{center}
@@ -244,14 +250,27 @@
     
         \begin{acolumns}[t]
         
-        \begin{column}{.32\linewidth}
+        \begin{column}{.24\linewidth}
+        		
+                 
+                 \begin{block}{Discussion}
+                 	\begin{itemize}
+                 		\item The use of Bayesian techniques provided convenient computations tools. It allowed for a smooth time-effect
+                 		\item                  		
+                 	\end{itemize}
+                  \autoheight   
+                 \end{block}
+                              
+        \end{column}
+        
+        \begin{column}{.24\linewidth}
 		
          
          \begin{block}{Strengths}
          	\begin{itemize}
          		\item The model is effectively separating the economic trend from the time trend
-         		\item The definition of economy being used is quite rich
-         		
+         		\item The measure of economy being used is quite flexible
+         		\item The model was able to differentiate between the effect of unemployment and the effect of market behaviour
          	\end{itemize}
           \autoheight   
          \end{block}
@@ -259,12 +278,12 @@
         \end{column}
                   
         
-        \begin{column}{.32\linewidth}
+        \begin{column}{.24\linewidth}
          
          \begin{block}{Limitations}
          	\begin{itemize}
          		\item The model should be complemented by model-validation results
-         		\item The model does not include the natural auto-correlation of the economic variables
+         		\item The model does not include the natural auto-regressive structure of the economic variables
          	\end{itemize}
           \autoheight   
          \end{block}
@@ -272,7 +291,7 @@
         \end{column}
         
         
-         \begin{column}{.32\linewidth}
+         \begin{column}{.24\linewidth}
                  
           \begin{block}{Acknowledgements}
              \begin{center}
