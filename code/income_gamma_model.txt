@@ -1,0 +1,95 @@
+##################################
+# Gamma JAGS model for TVTIME to be used in gamma_jags_model.R
+# Created by Sy, May 3rd, 2014
+# Updated May 15th, 2014
+# hosted on Github repo 'sahirbhatnagar/atus'
+# NOTE:
+##################################
+
+model{
+  
+  # for every observation
+
+  for(i in 1:N){
+    
+    RESPONSE[i] ~ dgamma(shape[i], rate[i])
+    
+    rate[i] <- mu[i] / pow(sd, 2)
+    shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
+    
+    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + 
+    	     				    beta_econ1 * ECON1[i] + beta_econ2 * ECON2[i] + gamma[MONTH[i],YEAR[i]] +
+ 					    beta_income * INCOME[i] + beta_i9 * INCOME[i] * ECON1[i] + beta_i10 * INCOME[i] * ECON2[i] + 0.00001 )
+    
+    P.res[i] <- (RESPONSE[i]-mu[i])/sqrt(mu[i])   #pearson residuals
+    D[i] <- pow(P.res[i],2)
+
+  }
+  
+  # Add up discrepancy measures
+  fit <- sum(D[])
+  
+  # PRIORS
+
+    alpha_sex ~ dnorm(0.0,0.001)
+
+    alpha_hispanic ~ dnorm(0.0,0.001)
+
+    for (i in 1:4) {
+      alpha_region[i] ~ dnorm(0.0,0.001)
+    }
+    
+    for (i in 1:7) {
+      alpha_diary[i] ~ dnorm(0.0,0.001)	
+    }
+    
+
+    for (i in 1:5) {
+      alpha_race[i] ~ dnorm(0.0,0.001)    
+    }
+    
+    beta_econ1 ~ dnorm(0.0,0.001)
+    beta_econ2 ~ dnorm(0.0,0.001)
+
+      #first do the time trend for 1st year
+      gammamean[1,1] <- 0.0
+      gammaprec[1,1] <- phi * 0.001
+      gammamean[2,1] <- 0.0
+      gammaprec[2,1] <- phi * 0.001
+    
+          for (i in 3:12) {
+              gammamean[i,1] <- 2 * gamma[i-1,1] - gamma[i-2,1]
+              gammaprec[i,1] <- phi
+          }
+
+    # now for years 2 to 10
+    for (j in 2:10){
+    
+      gammamean[1,j] <- 2 * gamma[12,j-1] - gamma[11,j-1]
+      gammaprec[1,j] <- phi 
+      gammamean[2,j] <- 2 * gamma[1,j] - gamma[12,j-1]
+      gammaprec[2,j] <- phi
+    
+          for (i in 3:12) {
+              gammamean[i,j] <- 2 * gamma[i-1,j] - gamma[i-2,j]
+              gammaprec[i,j] <- phi
+          }
+    }
+
+
+    for (i in 1:12) {
+        for (j in 1:10) {
+            gamma[i,j] ~ dnorm(gammamean[i,j],gammaprec[i,j])
+            logRR_time[i,j] <- gamma[i,j]-gamma[1,1]
+        }
+    }
+
+
+    beta_income ~ dnorm(0.0,0.001)
+    beta_i9 ~ dnorm(0.0,0.001)
+    beta_i10 ~ dnorm(0.0,0.001)
+    
+    phi ~ dgamma(0.001, 0.001)
+    sd ~ dgamma(0.001, 0.001)
+      
+}

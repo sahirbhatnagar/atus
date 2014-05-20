@@ -110,7 +110,9 @@ initslist.more = list('alpha_diary'=c(rep(1,6),NA), 'alpha_region'=c(rep(1,3),NA
 initslist.inc = list('alpha_diary'=c(rep(1,6),NA), 'alpha_region'=c(rep(1,3),NA),
                       'alpha_hispanic'=1, 'alpha_sex'=1, 'alpha_race'=c(rep(1,4),NA), 
                       'beta_econ1'= 1, 'beta_econ2'= 1,
-                      'phi'=1, 'gamma' = matrix(1,12,10), 'beta_income'=1, 'beta_i9'=1,'beta_i10'=1 )
+                      'phi'=1, 'gamma' = matrix(1,12,10), 'beta_income'=0.5,
+                     'beta_i9'=0.5,'beta_i10'=0.5 )
+
 
 
 
@@ -229,7 +231,7 @@ model.reg = jags.model(file.path(inpath, 'region_interaction_logit_model.txt'), 
 ss_econ_reg = coda.samples(model.reg, c("beta_econ1","beta_econ2",
                                         "beta_i3","beta_i4","gamma"), 10000, thin=10)
 
-save(ss_econ_reg, file="reg_samples.Rda")
+save(ss_econ_reg, file="reg_samples.Rda")  #Overwritten???
 
 #LOGIT model with only HISPANIC interaction
 
@@ -245,7 +247,7 @@ save(ss_econ_his, file="his_samples.Rda")
 #LOGIT model introducing income variable interaction
 
 model.inc = jags.model(file.path(inpath, 'income_interaction_logit_model.txt'), data=datalist.log,
-                       inits=initslist.inc, n.chains=2, n.adapt=10000, quiet=FALSE)
+                        n.chains=2, n.adapt=10000, quiet=FALSE)
 
 ss_econ_inc = coda.samples(model.inc, c("beta_econ1","beta_econ2",
                                         "beta_income","beta_i9","beta_i10","gamma"), 10000, thin=10)
@@ -253,6 +255,70 @@ ss_econ_inc = coda.samples(model.inc, c("beta_econ1","beta_econ2",
 save(ss_econ_inc, file="inc_samples.Rda")
 
 
+#GAMMA model introducing income variable interaction
+
+model.gaminc = jags.model(file.path(inpath, 'income_gamma_model.txt'), data=datalist.log,
+                      inits=initslist.inc, n.chains=2, n.adapt=10000, quiet=FALSE)
+
+ss_econ_gaminc = coda.samples(model.gaminc, c("beta_econ1","beta_econ2",
+                                        "beta_income","beta_i9","beta_i10","gamma"), 10000, thin=10)
+
+save(ss_econ_gaminc, file="gaminc_samples.Rda")
+
+
+
+
+#Get estimates and credible intervals to plot
+
+estimates = c(summary(ss_econ_new)$statistic[1:2,1],summary(ss_econ_int)$statistic[3:4,1], 
+              summary(ss_econ_race)$statistic[3:6,1], summary(ss_econ_race)$statistic[8:11,1],
+              summary(ss_econ_reg)$statistic[3:5,1], summary(ss_econ_reg)$statistic[7:9,1],
+              summary(ss_econ_his)$statistic[3:4,1])
+
+lower_ci = c(summary(ss_econ_new)$quantiles[1:2,1],summary(ss_econ_int)$quantiles[3:4,1], 
+             summary(ss_econ_race)$quantiles[3:6,1], summary(ss_econ_race)$quantiles[8:11,1],
+             summary(ss_econ_reg)$quantiles[3:5,1], summary(ss_econ_reg)$quantiles[7:9,1],
+             summary(ss_econ_his)$quantiles[3:4,1])
+
+upper_ci = c(summary(ss_econ_new)$quantiles[1:2,5],summary(ss_econ_int)$quantiles[3:4,5], 
+             summary(ss_econ_race)$quantiles[3:6,5], summary(ss_econ_race)$quantiles[8:11,5],
+             summary(ss_econ_reg)$quantiles[3:5,5], summary(ss_econ_reg)$quantiles[7:9,5],
+             summary(ss_econ_his)$quantiles[3:4,5])
+
+
+#Plot estimates with intervals
+
+var.names = c("ECON1 Main", "ECON2 Main", "ECON1 * SEX (Male)", "ECON2 * SEX (Male)", "ECON1 * RACE (White)",
+            "ECON2 * RACE (White)", "ECON1 * RACE (Black)", "ECON2 * RACE (Black)", "ECON1 * RACE (Nat Amer)", "ECON2 * RACE (Nat Amer)",
+            "ECON1 * RACE (Asian)", "ECON2 * RACE (Asian)", "ECON1 * REGION (NE)", "ECON2 * REGION (NE)", 
+            "ECON1 * REGION (MW)", "ECON2 * REGION (MW)", "ECON1 * REGION (South)", "ECON2 * REGION (South)", 
+            "ECON1 * HISPANIC", "ECON2 * HISPANIC")
+
+y.axis <- c(length(estimates):1)
+
+pdf("~/atus/poster/logit_estimates.pdf")
+
+par(mfrow=c(1,1))
+par(mar=c(2, 10, 6, 2))
+
+plot(estimates, y.axis, type = "p", axes = F, xlab = "", ylab = "", pch = 19, cex = .6,
+     xlim = c(-1,3.5), xaxs = "r", main = "Estimates and credible intervals for parameter\n estimates in logistic model")
+
+segments(0,0,0,20,lty=2,col='red')
+
+segments(lower_ci, y.axis, upper_ci, y.axis, lwd =  2)
+
+segments(lower_ci, y.axis -.1, lower_ci, y.axis +.1, lwd = 2)
+segments(upper_ci, y.axis -.1, upper_ci, y.axis +.1, lwd = 2)
+
+axis(1, at = seq(-2,3.5,by=.5), labels =  seq(-2,3.5,by=.5), tick = T,
+     cex.axis = .8, mgp = c(2,.5,0))
+axis(2, at = y.axis, label = var.names, las = 1, tick = T, 
+     cex.axis = .8) 
+
+dev.off()
+
+##############################################################################################################
 
 #LOGIT new model with no gamma
 
