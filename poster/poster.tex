@@ -176,7 +176,7 @@
               \begin{column}{.24\linewidth}
                \begin{block}{Selected socio-demographic variables}
                 \begin{itemize}
-                	\item Sex, age, region, race, marital status, education level, presence of household children
+                	\item Gender, age, region, race, hispanicity, marital status, education level, presence of household children or spouse, US citizenship status,
                 	
                 	\item Weekly earnings, labour force status, number of jobs, average number of hours worked in a week
                 	
@@ -196,18 +196,25 @@
     
     \begin{acolumns}[t]
     
-    \begin{column}{.64\linewidth}
+    \begin{column}{.72\linewidth}
     \begin{center}
    		\LARGE{1. Effect of economy}
     \end{center}
      \begin{block}{Method}
-                
+       
+       To test for the effect of economy, we use two generalized linear models: gamma regression and logistic regression.
+       $$g(\mu_i)=\beta_1ECON1_i+\beta_2ECON2_i + \alpha X_i + \lambda(t_i),$$
+       where $X_i$ are the covariates accounting for the stratified sampling scheme (gender, day of the week, region, hispanicity, race) and $\lambda(t)$ is a smooth function of time (measured in months). The smoothing was done via linear extrapolation:
+       $$E\left(\lambda(t)|\lambda(t-1),\lambda(t-2),\ldots,\lambda(1)\right) = 2\lambda(t-1) - \lambda(t-2).$$
+       The stochastic part of the models are respectively
+       $$TVTIME_i\sim \mathrm{Gamma}(\nu, \lambda_i),\hspace{1cm} g(x)=\log(x),\qquad\mbox{and}\qquad TVIND_i\sim \mathrm{Bernouilli}(\pi_i), \hspace{1cm} g(x)=\mathrm{logit}(x).$$
         
      \end{block}
      
      
      \begin{block}{Results}
-                     
+       \includegraphics{logit_estimates.pdf}   
+       \includegraphics{validation.pdf}
       \autoheight 
      \end{block}
      
@@ -215,7 +222,7 @@
     \end{column}
               
     
-    \begin{column}{.32\linewidth}
+    \begin{column}{.24\linewidth}
     \begin{center}
     	\LARGE{2. Main socio-demographic predictors}
     \end{center}
@@ -255,7 +262,7 @@
                  
                  \begin{block}{Discussion}
                  	\begin{itemize}
-                 		\item The use of Bayesian techniques provided convenient computations tools. It allowed for a smooth time-effect
+                 		\item The use of Bayesian techniques provided convenient computations tools. It allowed for both a smooth time effect and exact inference.
                  		\item                  		
                  	\end{itemize}
                   \autoheight   
@@ -282,7 +289,7 @@
          
          \begin{block}{Limitations}
          	\begin{itemize}
-         		\item The model should be complemented by model-validation results
+         		\item The model could be complemented by more model-validation results
          		\item The model does not include the natural auto-regressive structure of the economic variables
          	\end{itemize}
           \autoheight   

@@ -1,0 +1,24 @@
+plot(1:120, rep(0,120), xaxt="n")
+
+axis(1,at=seq(1,120,by=3), 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+
+axis(3, at=c(3,17,22,26,32,43,45,50,52,57,69,71,78,91,96,99.5,101.5,105,115),
+	labels=c("Iraq invasion", "1st US gay\n marriage", "Ubuntu",
+	"Youtube", "Katrina", "Blu-ray","Facebook", "Netflix", "Virg. Tech",
+	"Ipod Touch", "Crash", "Obama", "M. Jackson", "Wikileaks",
+	"Arab spring", "Will&Kate", "Ben Laden", "Occupy", "Higgs boson"),
+	tick=FALSE, las=3, cex.axis=0.7)
+
+abline(v=c(3,17,22,26,32,43,45,50,52,57,69,71,78,91,96,100,101,105,115),
+	lty=2, col="red")
