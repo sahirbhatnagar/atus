@@ -25,7 +25,15 @@ jags.parsamples <- foreach(i=1:getDoParWorkers(), .inorder = FALSE,
   return(result)
 }
 
+
+load("~/Dropbox/PhD/SSC case study/main_effect.RData")
+
+
 mcmcChain <- as.matrix(jags.parsamples)
+
+
+
+
 #Beta economy
 beta_econ_1 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_1")]
 beta_econ_2 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_2")]
@@ -66,12 +74,12 @@ abline(0, 1, lwd=2, col = "black")
 #                                       Plot 1                                  #
 #################################################################################
 #Mean residuals vs economy
-residuals <- mcmcChain[,which(colnames(mcmcChain)=="resid[1]"):which(colnames(mcmcChain)=="resid[547]")]
+residuals <- mcmcChain[,which(colnames(mcmcChain)=="resid[1]"):which(colnames(mcmcChain)=="resid[10941]")]
 residuals.m <- melt(residuals)
 dat_resid_econ <- data.frame(econ1=DTS$ECON1,econ2=DTS$ECON2,residuals=apply(residuals,2,mean))
-p <- ggplot(dat_resid_econ, aes(econ1, residuals))
-resid_econ1 <- p + geom_point(colour = "red", size = 3) + geom_abline(slope=0,intercept = 0)+
-  labs(list(title="Mean Residuals vs 1st Principal Component of Economy "), size=2)
+q <- ggplot(dat_resid_econ, aes(econ1, residuals))
+resid_econ1 <- q + geom_point(colour = "red", size = 3) + geom_abline(slope=0,intercept = 0)+
+  labs(list(title="Mean Residuals vs 1st PC of Economy "), size=2)+ylab("mean residuals")
 
 
 #################################################################################
@@ -80,21 +88,22 @@ resid_econ1 <- p + geom_point(colour = "red", size = 3) + geom_abline(slope=0,in
 #Mean residuals vs economy2
 p <- ggplot(dat_resid_econ, aes(econ2, residuals))
 resid_econ2 <- p + geom_point(colour = "red", size = 3) + geom_abline(slope=0,intercept = 0)+
-  labs(list(title="Mean Residuals vs 2nd Principal Component of Economy "), size=2)
+  labs(list(title="Mean Residuals vs 2nd PC of Economy "), size=2)+ylab("mean residuals")
 
 
 #################################################################################
 #                                       Plot 3                                  #
 #################################################################################
 # Residuals vs Fitted values
-fitted <- mcmcChain[,which(colnames(mcmcChain)=="C.new[1]"):which(colnames(mcmcChain)=="C.new[547]")]
-
+fitted <- mcmcChain[,which(colnames(mcmcChain)=="C.new[1]"):which(colnames(mcmcChain)=="C.new[10941]")]
+fitted.m <- melt(fitted)
 #dat_resid_observed <- data.frame(tvtime=DTS$TVTIME,residuals=apply(residuals,2,mean))
 dat_resid_fitted <- data.frame(simulated=apply(fitted,2,mean),residuals=apply(residuals,2,mean))
 
-p <- ggplot(dat_resid_fitted, aes(simulated, residuals))
-resid_fitted <- p + geom_point(colour = "red", size = 3) + geom_abline(slope=0,intercept = 0)+
-  labs(list(title="Mean Residuals vs Mean Simulated TV Time use"), size=2) + xlab("mean simulated TV Time use")
+r <- ggplot(dat_resid_fitted, aes(simulated, residuals))
+resid_fitted <- r + geom_point(colour = "red", size = 3) + geom_abline(slope=0,intercept = 0)+
+  labs(list(title="Mean Residuals vs Mean Simulated TV Time use"), size=2) + xlab("mean simulated TV Time use")+
+  ylab("mean residuals")
   
 
 
@@ -104,9 +113,9 @@ resid_fitted <- p + geom_point(colour = "red", size = 3) + geom_abline(slope=0,i
 #predicted values plotted over oberved histogram
 m <- ggplot(DTS, aes(x=TVTIME))
 fitted_hist <- m + geom_histogram(binwidth=25)+aes(y=..density..) + 
-  geom_density(data=pred.m, aes(x=value), size=1.1, colour="red")+
-  labs(list(title="Density of Fitted Values and Histogram of Observed TV Time use"), size=2)+
-  ylab("density") + xlab("observed TV Time")
+  geom_density(data=fitted.m, aes(x=value), size=1.1, colour="red")+
+  labs(list(title="Density of Simulated TV Times and Histogram of Observed TV Time use"), size=2)+
+  ylab("density") + xlab("observed TV Time") + ylim(c(0,2000))
 
 
 
@@ -120,6 +129,7 @@ pearson <- m + geom_point(colour = "red", size = 3) + geom_abline(intercept = 0)
   labs(list(title="Posterior predictive check for sum of squared Pearson residuals"), size=2) + xlab("Discrepancy measure for actual data set")+
 ylab("Discrepancy measure for simulated data set")
 
+summary(mcmcChain[,"chisq.p"])
 
 source("~/Dropbox/Winter 2014/MATH 783/Assignments/A3/multiplot.R")
 pdf("~/git_repositories/atus/poster/validation.pdf")
