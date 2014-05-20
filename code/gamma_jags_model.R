@@ -8,56 +8,64 @@
 
 #source("~/git_repositories//atus//code//data_cleaning.R")
 
-#On kevisco's laptop
-# setwd("~/atus/data")
-# On Sy's laptop
-setwd("~//git_repositories/atus/data/")
-# On Sy's desktop
-setwd("~//git_repositories//atus.git//data/")
-load("data.Rda")
+source("~/Dropbox/PhD/SSC case study/data.R")
 
-library(data.table)
-library(bit64)
-library(plotrix)
-library(rjags)
-list.modules()
-load.module("glm")
-list.modules()
-#unload.module("glm")
-#list.modules()
-
-xtabs(~DT$TUYEAR)
-
-#DT with non zero indicators 
-DT <- DT[TVIND!=0]
-#Sample subset of survey data
-set.seed(1234)
-prop <- 0.10
-DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
-xtabs(~DTS$QUARTER)
-
-#We first create the datafiles for JAGS
-#sy's desktop
- outpath <- "~//git_repositories//atus.git//data"
- inpath <- "~//git_repositories//atus.git//code"
-
-#sy's laptop
-outpath <- "~//git_repositories//atus//data"
-inpath <- "~//git_repositories//atus//code"
-
-
-datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY, 
-                     'REGION'=DTS$GEREG, 
-                     'HISPANIC'=DTS$PEHSPNON, 
-                     'SEX'=DTS$TESEX, 
-                     'RACE'=DTS$PTDTRACE, 
-                     'ECON1'=DTS$ECON1,
-                     'ECON2'=DTS$ECON2,
-                     'YEAR'=DTS$TUYEAR-2003+1,
-                     'MONTH'=DTS$TUMONTH,
-                     'RESPONSE'=DTS$TVTIME, 
-                     'N'=nrow(DTS))
-dput(datalist.gam, file.path(outpath, "datagam.txt"))
+# #On kevisco's laptop
+# # setwd("~/atus/data")
+# # On Sy's laptop
+# setwd("~//git_repositories/atus/data/")
+# # On Sy's desktop
+# setwd("~//git_repositories//atus.git//data/")
+# load("data.Rda")
+# 
+# library(data.table)
+# library(bit64)
+# library(plotrix)
+# library(rjags)
+# list.modules()
+# load.module("glm")
+# list.modules()
+# #unload.module("glm")
+# #list.modules()
+# 
+# xtabs(~DT$TUYEAR)
+# 
+# #DT with non zero indicators 
+# DT <- DT[TVIND!=0]
+# #Sample subset of survey data
+# set.seed(1234)
+# prop <- 0.10
+# DTS <- DT[sample(x=1:nrow(DT), size=prop*nrow(DT)), , ]
+# xtabs(~DTS$QUARTER)
+# 
+# #We first create the datafiles for JAGS
+# #sy's desktop
+#  outpath <- "~//git_repositories//atus.git//data"
+#  inpath <- "~//git_repositories//atus.git//code"
+# 
+# #sy's laptop
+# outpath <- "~//git_repositories//atus//data"
+# inpath <- "~//git_repositories//atus//code"
+# 
+# cpi = c(181,185,190,198,202,211,211,216,220,226)
+# 
+# #Income adjusted for inflation
+# sampinc = log(DTS$TRERNWA * cpi[1]/cpi[DTS$TUYEAR-2003+1])
+# sampinc[sampinc==-Inf] <- 0
+# 
+# datalist.gam <- list('DIARYDAY'=DTS$TUDIARYDAY, 
+#                      'REGION'=DTS$GEREG, 
+#                      'HISPANIC'=DTS$PEHSPNON, 
+#                      'SEX'=DTS$TESEX, 
+#                      'RACE'=DTS$PTDTRACE, 
+#                      'ECON1'=DTS$ECON1,
+#                      'ECON2'=DTS$ECON2,
+#                      'YEAR'=DTS$TUYEAR-2003+1,
+#                      'MONTH'=DTS$TUMONTH,
+#                      'RESPONSE'=DTS$TVTIME,
+#                      'INCOME'=sampinc,
+#                      'N'=nrow(DTS))
+# dput(datalist.gam, file.path(outpath, "datagam.txt"))
 
 # Then we need initial values (technically we dont need them, and since we 
 # dont have empirical estimates, so we let JAGS decide)
@@ -265,8 +273,6 @@ ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta
                                 "beta_econ_2_sex","P.res","P.res.new","C.res","resid","fit",
                                 "fit.new","chisqp"), 10000, thin=10)
 
-
-
 #time trend
 boxplot(mcmcChain[,-1:-10945],use.cols=TRUE, 
         main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
@@ -294,10 +300,72 @@ model <- jags.model(file.path(inpath, 'testing'), data=datalist.gam,
                     n.chains=2, n.adapt=2000, quiet=FALSE)
 
 ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta_econ_race_1",
-                                "beta_econ_race_2","P.res","P.res.new","C.res","resid","fit",
-                                "fit.new","chisqp"), 10000, thin=10)
+                                "beta_econ_race_2","P.res","P.res.new","C.new","resid","fit",
+                                "fit.new","chisq.p"), 10000, thin=10)
+
+ss_econ = coda.samples(model, c("C.new"), 1000, thin=10)
 
 plot(ss_econ, ask=TRUE)
+
+mcmcChain <- as.matrix(ss_econ)
+#Beta economy
+beta_econ_1 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_1")]
+beta_econ_2 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_2")]
+summary(beta_econ_1);summary(beta_econ_2)
+quantile(beta_econ_1, probs=c(0.025,0.975))
+quantile(beta_econ_2, probs=c(0.025,0.975))
+
+#race interaction 
+beta_econ_race_1 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_race_1[1]"):which(colnames(mcmcChain)=="beta_econ_race_1[5]")]
+beta_econ_race_2 <- mcmcChain[,which(colnames(mcmcChain)=="beta_econ_race_2[1]"):which(colnames(mcmcChain)=="beta_econ_race_2[5]")]
+summary(beta_econ_race_1);summary(beta_econ_race_2)
+
+apply(beta_econ_race_1,2,function(i) quantile(i,probs=c(0.025,0.975)))
+apply(beta_econ_race_2,2,function(i) quantile(i,probs=c(0.025,0.975)))
+
+#gamma time
+log_RR_time <- mcmcChain[,which(colnames(mcmcChain)=="logRR_time[1,1]"):which(colnames(mcmcChain)=="logRR_time[12,10]")]
+
+#time trend
+boxplot(log_RR_time,use.cols=TRUE, 
+        main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
+axis(1,at=seq(1,120,by=3), 
+     labels=c("Jan03","Apr03","Jul03","Oct03",
+              "Jan04","Apr04","Jul04","Oct04",
+              "Jan05","Apr05","Jul05","Oct05",
+              "Jan06","Apr06","Jul06","Oct06",
+              "Jan07","Apr07","Jul07","Oct07",
+              "Jan08","Apr08","Jul08","Oct08",
+              "Jan09","Apr09","Jul09","Oct09",
+              "Jan10","Apr10","Jul10","Oct10",
+              "Jan11","Apr11","Jul11","Oct11",
+              "Jan12","Apr12","Jul12","Oct12")
+     ,cex.axis=0.7, tck=-.01, las=3)
+abline(h=0,col="red", pch=10)
+
+#Residuals
+p.res <- mcmcChain[,which(colnames(mcmcChain)=="P.res[1]"):which(colnames(mcmcChain)=="P.res[10941]")]
+p.res.new <- mcmcChain[,which(colnames(mcmcChain)=="P.res.new[1]"):which(colnames(mcmcChain)=="P.res.new[10941]")]
+
+plot(mcmcChain[,"fit"], mcmcChain[,"fit.new"], main="Posterior predictive check \nfor sum of squared Pearson residuals", xlab="Discrepancy measure for actual data set", ylab="Discrepancy measure for perfect data sets", col="blue")
+abline(0, 1, lwd=2, col = "black")
+
+
+
+
+
+#simulated values
+pred <- mcmcChain[,1:1094]
+pred.m <- melt(pred)
+
+m <- ggplot(DTS, aes(x=TVTIME))
+m + geom_histogram(binwidth=25)+aes(y=..density..) + 
+  geom_density(data=pred.m, aes(x=value), size=2)
+
+
+
+
+
 
 
 
@@ -389,4 +457,8 @@ pred.m <- melt(pred)
 m <- ggplot(DTS, aes(x=TVTIME))
 m + geom_histogram(binwidth=25)+aes(y=..density..) + 
   geom_density(data=pred.m, aes(x=value), size=2)
+
+
+
+
 
