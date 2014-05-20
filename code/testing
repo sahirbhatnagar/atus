@@ -17,7 +17,7 @@ model{
     rate[i] <- mu[i] / pow(sd, 2)
     shape[i] <- pow(mu[i], 2) / pow(sd, 2) 
     
-    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i]  + gamma[MONTH[i],YEAR[i]] + 0.00001 )
+    mu[i] <- exp(alpha_diary[DIARYDAY[i]] + alpha_region[REGION[i]] + alpha_hispanic * HISPANIC[i] + alpha_sex * SEX[i] + alpha_race[RACE[i]] + beta_econ_1 * ECON1[i] + beta_econ_2 * ECON2[i]  + gamma[MONTH[i],YEAR[i]] + beta_econ_race_1[RACE[i]] * ECON1[i] + beta_econ_race_2[RACE[i]] * ECON2[i] + 0.00001 )
     
     #Fit Assessments
     P.res[i] <- (RESPONSE[i]-mu[i])/mu[i]   #pearson residuals
@@ -58,10 +58,12 @@ model{
     beta_econ_1 ~ dnorm(0.0,0.001)
     beta_econ_2 ~ dnorm(0.0,0.001)
     
-    #for (i in 1:5){
-    #beta_econ_1_race[i] ~ dnorm(0.0,0.001)
-    #beta_econ_2_race[i] ~ dnorm(0.0,0.001)    
-    #}
+    for (i in 1:4){
+    beta_econ_race_1[i] ~ dnorm(0.0,0.001)
+    beta_econ_race_2[i] ~ dnorm(0.0,0.001)    
+    }
+    beta_econ_race_1[5] <- 0
+    beta_econ_race_2[5] <- 0
 
       #first do the time trend for 1st year
       gammamean[1,1] <- 0.0
