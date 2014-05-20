@@ -267,17 +267,6 @@ ss_econ = coda.samples(model, c("beta_econ_1", "beta_econ_2", "logRR_time","beta
 
 
 
-save.image(file="~/Dropbox/PhD/SSC case study/gamma2_interaction.RData")
-
-
-summary(ss_econ[[2]][,-1:-10941])
-
-mcmcChain <- as.matrix(ss_econ)
-mcmcChain[1:5,10941:10946]
-DTS$TVTIME[1:5]
-summary(mcmcChain[,-1:-10941])
-
-
 #time trend
 boxplot(mcmcChain[,-1:-10945],use.cols=TRUE, 
         main=expression(paste(hat(gamma)[month_year], " for month,year")),xaxt="n")
