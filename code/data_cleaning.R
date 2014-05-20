@@ -228,7 +228,7 @@ h2 <- m + geom_histogram(aes(fill=factor(PTDTRACE)), size=1, position="fill") + 
   xlab("TV time (in min)") + scale_fill_discrete(name="Race", 
                                                      labels=c("White", 
                                                               "Black", 
-                                                              "American\n Indian", 
+                                                              "Native\n American", 
                                                               "Asian", 
                                                               "Pacific\n Islander"))
 
@@ -240,7 +240,7 @@ h3 <- m + geom_histogram(aes(fill=factor(GEREG)), size=1, position="fill") + xli
                                                               "West"))
 
 h4 <- m + geom_histogram(aes(fill=factor(TELFS)), size=1, position="fill") + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in min)") + scale_fill_discrete(name="Labour force status", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Labour force\n status", 
                                                      labels=c("Employed\n (at work)", 
                                                               "Employed\n (absent)", 
                                                               "Unemployed\n (on layoff)", 
