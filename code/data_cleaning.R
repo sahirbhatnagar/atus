@@ -188,12 +188,12 @@ library(ggplot2)
 m <- ggplot(DT, aes(x = TVTIME))
 
 m1 <- m + geom_density(aes(fill=factor(TESEX)), size=1, alpha=0.3) + xlim(0,400) + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Gender", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Gender", 
                                                      labels=c("Woman", 
                                                               "Man"))
 
 m2 <- m + geom_density(aes(fill=factor(PTDTRACE)), size=1, alpha=0.3) + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Race", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Race", 
                                                      labels=c("White", 
                                                               "Black", 
                                                               "American Indian", 
@@ -201,14 +201,14 @@ m2 <- m + geom_density(aes(fill=factor(PTDTRACE)), size=1, alpha=0.3) + xlim(0,4
                                                               "Hawaiian/Pacific Islander"))
 
 m3 <- m + geom_density(aes(fill=factor(GEREG)), size=1, alpha=0.3) + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Region", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Region", 
                                                      labels=c("Northeast", 
                                                               "Midwest", 
                                                               "South", 
                                                               "West"))
 
 m4 <- m + geom_density(aes(fill=factor(TELFS)), size=1, alpha=0.3) + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Labour force status", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Labour force status", 
                                                      labels=c("Employed - at work", 
                                                               "Employed - absent", 
                                                               "Unemployed - on layoff", 
@@ -220,31 +220,31 @@ multiplot(m1, m2, m3, m4, cols=2)
 #histograms
 
 h1 <- m + geom_histogram(aes(fill=factor(TESEX)), size=1, position="fill") + xlim(0,400) + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Gender", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Gender", 
                                                      labels=c("Woman", 
                                                               "Man"))
 
 h2 <- m + geom_histogram(aes(fill=factor(PTDTRACE)), size=1, position="fill") + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Race", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Race", 
                                                      labels=c("White", 
                                                               "Black", 
-                                                              "American Indian", 
+                                                              "American\n Indian", 
                                                               "Asian", 
-                                                              "Hawaiian/Pacific Islander"))
+                                                              "Pacific\n Islander"))
 
 h3 <- m + geom_histogram(aes(fill=factor(GEREG)), size=1, position="fill") + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Region", 
+  xlab("TV time (in min)") + scale_fill_discrete(name="Region", 
                                                      labels=c("Northeast", 
                                                               "Midwest", 
                                                               "South", 
                                                               "West"))
 
 h4 <- m + geom_histogram(aes(fill=factor(TELFS)), size=1, position="fill") + xlim(0,400) + xlab("TV time (in minutes)") + 
-  xlab("TV time (in minutes)") + scale_fill_discrete(name="Labour force status", 
-                                                     labels=c("Employed - at work", 
-                                                              "Employed - absent", 
-                                                              "Unemployed - on layoff", 
-                                                              "Unemployed - looking", 
-                                                              "Not in labour force"))
+  xlab("TV time (in min)") + scale_fill_discrete(name="Labour force status", 
+                                                     labels=c("Employed\n (at work)", 
+                                                              "Employed\n (absent)", 
+                                                              "Unemployed\n (on layoff)", 
+                                                              "Unemployed\n (looking)", 
+                                                              "Not in\n labour force"))
 
 multiplot(h1, h2, h3, h4, cols=2)
