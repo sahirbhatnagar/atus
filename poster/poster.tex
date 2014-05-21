@@ -99,7 +99,7 @@
           
           
             \begin{block}{Abstract}
-    			We consider the effect of economy on the amount of time Americans reported watching television on the ATUS  between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, and stock indices; these measures were summarized using their first two principal components. A GLM is used to test the association between economy and TV time use, with time being included smoothly. We report that watching television is associated with unemployment rate, and that the association changes with gender (but not with region, race or income). Then, using penalized regression, we determine that the strongest sociodemographic factors influencing television viewing are age, gender, presence of household children, and average number of hours worked in a week.  The stratified sampling scheme is accounted for through regression techniques, and two seperate models are used to deal with the zero-inflated nature of the data. 
+    			We consider the effect of economy on the amount of time Americans reported watching television on the ATUS  between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, and stock indices; these measures are summarized using their first two principal components. A GLM is used to test the association between economy and TV time use, with time being included smoothly. We report that watching television is associated with both PCs, and that the association changes with gender (but not with region, race or income). Then, using penalized regression, we determine that the strongest sociodemographic factors influencing television viewing are age, gender, presence of household children, and average number of hours worked in a week.  The stratified sampling scheme is accounted for through regression techniques, and two seperate models are used to deal with the zero-inflated nature of the data. 
             
             \end{block}
             
@@ -132,11 +132,11 @@
                   		  \begin{itemize}
                   		  	\item About 20\% of respondents reported no TV watching; two separate models are used to address this issue
                   		  	
-                  		  	\item How can economy be measured. \textbf{Note}: economy cannot have a direct, causal effect on TV watching
+                  		  	\item How can economy be measured? \textbf{Note}: economy cannot have a direct, causal effect on TV watching
                   		  	
-                  		  	\item Since economy varies with time, how can we separate the effect of time from the effect of economy
+                  		  	\item Since economy varies with time, how can we separate the effect of time from the effect of economy?
                   		  	
-                  		  	\item How to take into account the stratified sampling scheme
+                  		  	\item How to take into account the stratified sampling scheme?
                   		  	\begin{itemize}
                   		  		\item Through regression (Gelman, 2007)
                   		  	\end{itemize}
@@ -158,7 +158,7 @@
               
                 
              
-                \begin{block}{Economy and Stratification}
+                \begin{block}{Economic measures and Distribution of TV use}
                 	
                  \begin{figure}
                  \centering
@@ -193,10 +193,10 @@
     \begin{center}
    		\LARGE{1. Effect of economy}
     \end{center}
-     \begin{block}{Method}
+     \begin{block}{Methods}
        
        To test for the effect of economy, we use two GLMs: gamma regression and logistic regression.
-       $$g(\mu_i)=\beta_1ECON1_i+\beta_2ECON2_i + \alpha X_i + \lambda(t_i),$$
+       $$g(\mu_i)=\beta_1ECON1_i+\beta_2ECON2_i + \alpha^t X_i + \lambda(t_i),$$
        where $X_i$ are the covariates accounting for the stratified sampling scheme (gender, day of the week, region, hispanicity, race) and $\lambda(t)$ is a smooth function of time (measured in months). The smoothing was done via linear extrapolation:
        $$E\left(\lambda(t)|\lambda(t-1),\lambda(t-2),\ldots,\lambda(1)\right) = 2\lambda(t-1) - \lambda(t-2).$$
        The stochastic part of the models are respectively
@@ -245,7 +245,7 @@
     	\LARGE{2. Main socio-demographic predictors}
     \end{center}
     
-    \begin{block}{Selected socio-demographic variables}
+    \begin{block}{Socio-demographic variables}
                     \begin{itemize}
                     	\item Gender, age, region, race, hispanicity, marital status, education level, presence of household children or spouse, US citizenship status
                     	
@@ -260,12 +260,12 @@
                       
                   
     
-     \begin{block}{Method}
+     \begin{block}{Methods}
      	\begin{itemize}
      		\item We use a penalized GLM to select the most relevant socio-demographic factors. The group-Lasso penalty (Yuan \& Lin, 2007) is:
-     		$$\lambda \sum_{\ell=1}^{L}\sqrt{p_\ell}\|\beta_\ell\|_2.$$
+     		$$\tau \sum_{\ell=1}^{L}\sqrt{p_\ell}\|\beta_\ell\|_2.$$
      		This penalty is used to account for the fact that some predictors are categorical. Here, $p_\ell$ is the number of features in group $\ell=1,\ldots,L$.
-     		\item The tuning parameter $\lambda$ is selected using 10-fold cross-validation and the one-standard error rule (Hastie \emph{et al.}, \emph{Elements of Statistical Learning})
+     		\item The tuning parameter $\tau$ is selected using 10-fold cross-validation and the one-standard error rule (Hastie \emph{et al.}, \emph{Elements of Statistical Learning})
      	\end{itemize}
         
                      
@@ -331,6 +331,7 @@
          		\item The gamma GLM assumes a constant dispersion parameter; model diagnostics seem to indicate otherwise
          		\item The model does not include the natural auto-regressive structure of the economic variables
          		\item The measure of association with economy may be too coarse
+         		\item To measure economy, we used PCA, which ignores the relationship with the response
          	\end{itemize}
           \autoheight   
          \end{block}
@@ -342,7 +343,7 @@
                  
           \begin{block}{Acknowledgements}
              \begin{center}
-             We would like to thank Dr. Celia Greenwood, Dr. Olli Saarela, Dr. Abbas Khalili, and Dr. James Hanley for their help and input on this project. The training and advice they have provided and continue to provide has been influential on this project and beyond.
+             We would like to thank Dr.~Celia~Greenwood, Dr. Olli~Saarela, Dr.~Abbas~Khalili, and Dr.~James~Hanley for their help and input on this project. The training and advice they have provided and continue to provide has been influential on this project and beyond.
              \end{center}
              
            \autoheight   
