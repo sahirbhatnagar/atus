@@ -10,11 +10,15 @@
   \usepackage{calc} 
   \usepackage{times}
   \usepackage{wrapfig}
+  \usepackage[labelformat=empty]{caption}
   \usepackage{amsmath,amsthm, amssymb, latexsym}
   \boldmath
   \usepackage[english]{babel}
   \usepackage[latin1]{inputenc}
   \usepackage[orientation=landscape,width=71, height=35,debug]{beamerposter}
+  
+  \setbeamertemplate{caption}{\insertcaption} \setbeamertemplate{caption label separator}{}
+  
   \title{SSC 2014 Case Study Competition}
   \author{Sahir Bhatnagar, Kevin McGregor and Maxime Turgeon}
   \institute{Department of Epidemiology, Biostatistics and Occupational Health, McGill University} 
@@ -88,106 +92,95 @@
     \vfill
     
         \begin{acolumns}[t]
-          \begin{column}{.32\linewidth}
+          
+          
+          
+          \begin{column}{.24\linewidth}
+          
           
             \begin{block}{Abstract}
-    			We consider the effect of economy on the amount of time citizens reported watching television on the ATUS  between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, and stock indices, as reported by federal agencies, with PCA being used to derive an aggregate measure. Using penalized regression methods, we determine the strongest sociodemographic factors (e.g. race, sex, education level, income) influencing television viewing. A hierarchical model is used to allow the association with covariates to vary smoothly with time. To account for the large number of respondents reporting no hours of television viewing, a separate logistic model is proposed.
-              \autoheight 
+    			We consider the effect of economy on the amount of time Americans reported watching television on the ATUS  between 2003 and 2012. Measures of economic performance include GDP, unemployment rate, and stock indices; these measures were summarized using their first two principal components. A GLM is used to test the association between economy and TV time use, with time being included smoothly. We report that watching television is associated with unemployment rate, and that the association changes with gender (but not with region, race or income). Then, using penalized regression, we determine that the strongest sociodemographic factors influencing television viewing are age, gender, presence of household children, and average number of hours worked in a week.  The stratified sampling scheme is accounted for through regression techniques, and two seperate models are used to deal with the zero-inflated nature of the data. 
+            
             \end{block}
+            
+            \begin{block}{Main questions}
+                        
+                        \begin{enumerate}
+                        	\item What effect does the economy have on the amount of time spent watching TV? Does this vary by gender, race, income? 
+            
+                        	\item What are the strongest socio-demographic predictors of time spent watching TV?
+                        \end{enumerate}
+                        \autoheight
+                       \end{block}
             
           
           \end{column}
           
-          \begin{column}{.32\linewidth}
-            \begin{block}{Introduction}
+          \begin{column}{.24\linewidth}
+            \begin{block}{Description of the data}
               \begin{itemize}
-              	\item Since 2003, the ATUS has been collecting information on how Americans spend a day, what kind of activities they perform, and for how long.
+              	\item Since 2003, the American Time Use Survey (ATUS) has been collecting information on how Americans spend a day, what kind of activities they perform, with whom, and for how long.
               	\item Over a decade, some 135,000 respondents were asked to walk an interviewer through a selected day.
               	\item The dataset itself contains socio-demographic information about the respondents (e.g. sex, race, income), as well as time-use variables (e.g. sleeping, working, watching TV)
               \end{itemize}
-              \autoheight 
+              
             \end{block}
     
-          \end{column}
           
-          \begin{column}{.32\linewidth}
-           \begin{block}{Main questions}
-            
-            \begin{itemize}
-            	\item What effect does the economy have on the amount of time spent watching TV? Does this vary by gender? Does this vary according to your labour force participation? Does this vary across income?
-
-            	\item What are the strongest socio-demographic predictors of time spent watching TV?
-            \end{itemize}
-            \autoheight
-           \end{block}
-              
-          \end{column}
           
-        \end{acolumns}
-    
-    
-    \vfill 
-    
-    \begin{acolumns}[t]
-              \begin{column}{.24\linewidth}
-              
-                \begin{block}{Main challenges}
-        		  \begin{itemize}
-        		  	\item About 20\% of respondents reported no TV watching; two separate models are used to address this issue
-        		  	
-        		  	\item How can economy be measured. \textbf{Note}: economy cannot have a direct, causal effect on TV watching
-        		  	
-        		  	\item How can we separate the effect of time from the effect of economy
-        		  	
-        		  	\item How to take into account the stratified sampling scheme
-        		  \end{itemize}
-        			
-                  \autoheight 
-                \end{block}
-                
-              
-              \end{column}
-              
-              \begin{column}{.24\linewidth}
-                \begin{block}{Economy}
-                	
-                  \begin{wrapfigure}{l}{0.5\textwidth}
-                  \includegraphics[height=4.5in]{econ_measures.pdf}
-                  \end{wrapfigure}
-                  Several economic measures were collected via US federal agencies, and an aggregate measurement was constructed using Principal Component Analysis
-                  
-                  \vspace{2in}
-                  \autoheight 
-                \end{block}
+          \begin{block}{Main challenges}
+                  		  \begin{itemize}
+                  		  	\item About 20\% of respondents reported no TV watching; two separate models are used to address this issue
+                  		  	
+                  		  	\item How can economy be measured. \textbf{Note}: economy cannot have a direct, causal effect on TV watching
+                  		  	
+                  		  	\item Since economy varies with time, how can we separate the effect of time from the effect of economy
+                  		  	
+                  		  	\item How to take into account the stratified sampling scheme
+                  		  	\begin{itemize}
+                  		  		\item Through regression (Gelman, 2007)
+                  		  	\end{itemize}
+                  		  	
+                  		  	\item How to handle missing data
+                  		  \end{itemize}
+                  			
+                            \autoheight 
+                          \end{block}
+                          
+                        
+        \end{column}
+                        
+          
         
-              \end{column}
+    
+  
+              \begin{column}{.48\linewidth}
               
-              \begin{column}{.24\linewidth}
-               \begin{block}{Stratification}
-                \begin{center}
-                \includegraphics{stratification}
-                \end{center}
-               
+                
+             
+                \begin{block}{Economy and Stratification}
+                	
+                 \begin{figure}
+                 \centering
+                 
+                 \begin{minipage}{0.5\textwidth}
+                 \centering
+                 \includegraphics[width=.75\textwidth]{econ_measures.pdf}
+                 \end{minipage}%                 
+                 \begin{minipage}{0.5\textwidth}
+                 \centering
+                 \begin{figure}
+                 \includegraphics[height=0.25\textheight,width=\textwidth]{stratification}
+                 \caption{Reported TV time, stratified according to gender, race, region, and labour force status}
+                 \end{figure}
+                 \end{minipage}%                 
+                 \end{figure}
+                                 
                 \autoheight
                \end{block}
                
-              \end{column}
-               
-              \begin{column}{.24\linewidth}
-               \begin{block}{Selected socio-demographic variables}
-                \begin{itemize}
-                	\item Gender, age, region, race, hispanicity, marital status, education level, presence of household children or spouse, US citizenship status,
-                	
-                	\item Weekly earnings, labour force status, number of jobs, average number of hours worked in a week
-                	
-                	\item Month and year the interview was conducted, the day of the week, whether it was a holiday
-                	
-                \end{itemize}
-                             
-                \autoheight
-               \end{block}
-                  
-              \end{column}
+             
+               \end{column}
               
             \end{acolumns}
         
@@ -202,19 +195,44 @@
     \end{center}
      \begin{block}{Method}
        
-       To test for the effect of economy, we use two generalized linear models: gamma regression and logistic regression.
+       To test for the effect of economy, we use two GLMs: gamma regression and logistic regression.
        $$g(\mu_i)=\beta_1ECON1_i+\beta_2ECON2_i + \alpha X_i + \lambda(t_i),$$
        where $X_i$ are the covariates accounting for the stratified sampling scheme (gender, day of the week, region, hispanicity, race) and $\lambda(t)$ is a smooth function of time (measured in months). The smoothing was done via linear extrapolation:
        $$E\left(\lambda(t)|\lambda(t-1),\lambda(t-2),\ldots,\lambda(1)\right) = 2\lambda(t-1) - \lambda(t-2).$$
        The stochastic part of the models are respectively
        $$TVTIME_i\sim \mathrm{Gamma}(\nu, \lambda_i),\hspace{1cm} g(x)=\log(x),\qquad\mbox{and}\qquad TVIND_i\sim \mathrm{Bernouilli}(\pi_i), \hspace{1cm} g(x)=\mathrm{logit}(x).$$
+       The model was fitted using Gibbs sampling, via JAGS (Plummer, 2003) and \texttt{R}, using a 10\% random sample.
         
      \end{block}
      
      
      \begin{block}{Results}
-       \includegraphics{logit_estimates.pdf}   
-       \includegraphics{validation.pdf}
+     
+     \begin{figure}
+      \centering                      
+      \begin{minipage}{0.25\textwidth}
+      \centering
+      \includegraphics{logit_estimates.pdf}
+      \end{minipage}%   
+      \begin{minipage}{0.25\textwidth}
+             \centering
+             \includegraphics{gamma_estimates.pdf}
+            \end{minipage}%                    
+      \begin{minipage}{0.25\textwidth}
+      \centering
+      \includegraphics{validation.pdf}
+      \caption{Model diagnostics}
+      \end{minipage}%      
+      \begin{minipage}{0.25\textwidth}
+       \centering
+       \includegraphics{time_trend.pdf}
+       \caption{Smoothed time trend and major events}
+      \end{minipage}%            
+                      
+      \end{figure}
+     
+          
+       
       \autoheight 
      \end{block}
      
@@ -226,12 +244,28 @@
     \begin{center}
     	\LARGE{2. Main socio-demographic predictors}
     \end{center}
+    
+    \begin{block}{Selected socio-demographic variables}
+                    \begin{itemize}
+                    	\item Gender, age, region, race, hispanicity, marital status, education level, presence of household children or spouse, US citizenship status
+                    	
+                    	\item Weekly earnings, labour force status, number of jobs, average number of hours worked in a week
+                    	
+                    	\item Month and year the interview was conducted, the day of the week, whether it was a holiday
+                    	
+                    \end{itemize}
+                                 
+                    
+                   \end{block}
+                      
+                  
+    
      \begin{block}{Method}
      	\begin{itemize}
-     		\item We use a penalized generalized linear model to select the most relevant socio-demographic factors. The penalty being used is the group-Lasso penalty (Yuan \& Lin, 2007):
+     		\item We use a penalized GLM to select the most relevant socio-demographic factors. The group-Lasso penalty (Yuan \& Lin, 2007) is:
      		$$\lambda \sum_{\ell=1}^{L}\sqrt{p_\ell}\|\beta_\ell\|_2.$$
-     		This penalty is used to account for the fact that some predictors are categorical.
-     		\item The tuning parameter is selected using 10-fold cross-validation and the one-standard error rule (Hastie \emph{et al.}, \emph{Elements of Statistical Learning})
+     		This penalty is used to account for the fact that some predictors are categorical. Here, $p_\ell$ is the number of features in group $\ell=1,\ldots,L$.
+     		\item The tuning parameter $\lambda$ is selected using 10-fold cross-validation and the one-standard error rule (Hastie \emph{et al.}, \emph{Elements of Statistical Learning})
      	\end{itemize}
         
                      
@@ -240,9 +274,9 @@
           
      \begin{block}{Results}
         \begin{itemize}
-        	\item For the logistic model, the selected factors are: presence of household children, age, sex, average number of hours worked in a week, and the number of jobs.
+        	\item For the \textbf{logistic model}, the selected factors are: presence of household children, age, gender, average number of hours worked in a week, and the number of jobs.
         	
-        	\item For the gamma model, the selected factors are: presence of household children, age, sex, weekly earnings, presence of spouse in household, average number of hours worked in a week, diary day, education level, race, and the number of jobs.
+        	\item For the \textbf{gamma model}, the selected factors are: presence of household children, age, gender, weekly earnings, presence of spouse in household, average number of hours worked in a week, diary day, education level, race, and the number of jobs.
         \end{itemize}
        \autoheight                   
      \end{block}
@@ -262,8 +296,13 @@
                  
                  \begin{block}{Discussion}
                  	\begin{itemize}
-                 		\item The use of Bayesian techniques provided convenient computations tools. It allowed for both a smooth time effect and exact inference.
-                 		\item                  		
+                 		\item \textbf{Why Bayesian}: convenient computational tools, smooth time effect, and exact inference
+                 		
+                 		\item \textbf{Survey weighting is overrated}: regression methods are sufficient
+                 		
+                 		\item \textbf{Zero inflation}: two phenomena, two models
+                 		
+                 		\item \textbf{Computational efficiency}: Group-Lasso fast, Gibbs sampling slow
                  	\end{itemize}
                   \autoheight   
                  \end{block}
@@ -289,8 +328,9 @@
          
          \begin{block}{Limitations}
          	\begin{itemize}
-         		\item The model could be complemented by more model-validation results
+         		\item The gamma GLM assumes a constant dispersion parameter; model diagnostics seem to indicate otherwise
          		\item The model does not include the natural auto-regressive structure of the economic variables
+         		\item The measure of association with economy may be too coarse
          	\end{itemize}
           \autoheight   
          \end{block}
@@ -302,7 +342,7 @@
                  
           \begin{block}{Acknowledgements}
              \begin{center}
-             We would like to thank Dr. Celia Greenwood, Dr. Olli Saarela, Dr. Abbas Khalili, and Dr. James Hanley for their help and input on this project.
+             We would like to thank Dr. Celia Greenwood, Dr. Olli Saarela, Dr. Abbas Khalili, and Dr. James Hanley for their help and input on this project. The training and advice they have provided and continue to provide has been influential on this project and beyond.
              \end{center}
              
            \autoheight   
